@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { LoginUser } from "@/lib/user/services/user.services";
 
 const FormSchema = z.object({
   email: z.string().min(2, {
@@ -35,15 +36,23 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("Vous avez soumis les informations suivantes :", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      const user = await LoginUser(data);
+      if (user) {
+        toast.success("Connexion réussie !", {
+          duration: 3000,
+        });
+        form.reset();
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(`Erreur: ${error.message}`, {
+        duration: 3000,
+      });
+    }
   }
+
 
   return (
     <Form {...form}>
@@ -74,7 +83,9 @@ export function LoginForm() {
               <FormControl>
                 <Input type="password" placeholder="••••••••" {...field} />
               </FormControl>
-              <FormDescription>Votre mot de passe doit contenir au moins 8 caractères.</FormDescription>
+              <FormDescription>
+                Votre mot de passe doit contenir au moins 8 caractères.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
