@@ -17,7 +17,7 @@ export const RegisterUser = async (
 ): Promise<User> =>
   axios
     .post<User>(`${userUrl}/register`, userData)
-    .then((Response) => Response.data)
+    .then((response) => response.data)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .catch((error: any) => {
       const err = error?.response?.data?.message;
