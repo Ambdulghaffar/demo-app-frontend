@@ -24,7 +24,7 @@ export const RegisterUser = async (
       throw new Error(err);
     });
 
-
+  
 
 export async function LoginUser(Logindata: Partial<LoginDto>): Promise<User> {
   return axios
