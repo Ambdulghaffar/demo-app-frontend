@@ -3,7 +3,7 @@ import React from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RegisterUser } from "@/lib/user/services/user.services";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/utils/route";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -34,6 +36,9 @@ const FormSchema = z.object({
 
 
 export function RegisterForm() {
+
+  const route = useRouter();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -49,14 +54,27 @@ export function RegisterForm() {
       const user = await RegisterUser(data);
       if (user) {
         toast.success("Inscription réussie !", {
-          duration: 3000
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
+        route.push(ROUTES.DASHBOARD);
         form.reset();
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(`Erreur: ${error.message}`, {
-        duration: 3000,
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
     }
   }
