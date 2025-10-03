@@ -21,16 +21,25 @@ import { RegisterUser } from "@/lib/user/services/user.services";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/route";
 
+
+
 const FormSchema = z.object({
   username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: "Le nom d'utilisateur doit contenir au moins 2 caractères.",
   }),
   email: z.email(),
+  phone: z.string()
+    .min(10, {
+      message: "Le numéro de téléphone doit contenir au moins 10 chiffres.",
+    })
+    .regex(/^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/, {
+      message: "Veuillez entrer un numéro de téléphone valide.",
+    }),
   password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
+    message: "Le mot de passe doit contenir au moins 8 caractères.",
   }),
   address: z.string().min(2, {
-    message: "Address must be at least 2 characters.",
+    message: "L'adresse doit contenir au moins 2 caractères.",
   }),
 });
 
@@ -44,6 +53,7 @@ export function RegisterForm() {
     defaultValues: {
       username: "",
       email: "",
+      phone:"",
       password: "",
       address: "",
     },
@@ -114,6 +124,27 @@ export function RegisterForm() {
               </FormControl>
               <FormDescription>
                 Nous utiliserons cet email pour vous contacter.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />       
+         {/* Téléphone */}
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Téléphone</FormLabel>
+              <FormControl>
+                <Input
+                  type="tel"
+                  placeholder="Votre numéro de téléphone"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Nous utiliserons ce numéro de téléphone pour vous contacter.
               </FormDescription>
               <FormMessage />
             </FormItem>

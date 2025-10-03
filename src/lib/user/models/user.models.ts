@@ -2,6 +2,7 @@ export type User = {
   id: number;
   username: string;
   email: string;
+  phone:string;
   address: string;
   password: string;
   createdAt: string;
@@ -11,6 +12,7 @@ export type User = {
 export interface RegisterDto {
   username: string;
   email: string;
+  phone:string;
   address: string;
   password: string;
 }
