@@ -5,9 +5,9 @@ import {
   AudioWaveform,
   Command,
   Frame,
-  GalleryVerticalEnd,
   Map,
   PieChart,
+  School2,
 } from "lucide-react";
 
 import { NavMain } from "@/components/dashboard/nav-main";
@@ -31,9 +31,9 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      name: "Groupe Scolaire Espoir",
+      logo: School2,
+      plan: "Etablissement",
     },
     {
       name: "Acme Corp.",
