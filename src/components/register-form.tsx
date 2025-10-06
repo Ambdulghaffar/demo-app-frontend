@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RegisterUser } from "@/lib/user/services/user.services";
+import { registerUser } from "@/lib/user/services/user.services";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/route";
 
@@ -61,7 +61,7 @@ export function RegisterForm() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const user = await RegisterUser(data);
+      const user = await registerUser(data);
       if (user) {
         toast.success("Inscription réussie !", {
           position: "top-right",

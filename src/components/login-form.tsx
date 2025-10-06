@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { LoginUser } from "@/lib/user/services/user.services";
+import { loginUser } from "@/lib/user/services/user.services";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/route";
 
@@ -42,7 +42,7 @@ export function LoginForm() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const user = await LoginUser(data);
+      const user = await loginUser(data);
       if (user) {
         toast.success("Connexion réussie !", {
           position: "top-right",

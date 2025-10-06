@@ -9,6 +9,15 @@ export type User = {
   updatedAt: string;
 };
 
+export type UserDto = {
+  id: number;
+  username: string;
+  email: string;
+  phone:string;
+  address: string;
+  createdAt: string;
+}
+
 export interface RegisterDto {
   username: string;
   email: string;
