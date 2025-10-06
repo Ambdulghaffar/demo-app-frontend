@@ -25,8 +25,8 @@ import { NavMainAdmin } from "@/utils/nav-main-admin";
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Ambdulghaffar Ahamadi",
+    email: "ambdulghaffar@gmail.com",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: [
