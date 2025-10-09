@@ -48,3 +48,7 @@ export async function loginUser(loginData: Partial<LoginDto>): Promise<User> {
       })
   );
 }
+
+export const deleteUser = async (id: number): Promise<void> => {
+  return axios.delete<void>(`${userUrl}/${id}`).then((res) => res.data);
+};
