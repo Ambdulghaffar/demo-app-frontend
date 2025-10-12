@@ -96,7 +96,7 @@ export default function ListUsers() {
               <TableCell>{user.createdAt}</TableCell>
               <TableCell className="ps-5">
                 <div className="flex item-center gap-3">
-                  <Link href={"#"}>
+                  <Link href={`${ROUTES.DASHBOARD_UPDATE_USERS}/${user.id}`}>
                     <Pen color="blue" size={16} />
                   </Link>
                   <ConfirmationDialog

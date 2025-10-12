@@ -12,6 +12,16 @@ const {
   },
 } = environment;
 
+export const getUserById = async (id: number): Promise<User | null> => {
+  return axios
+    .get<User>(`${userUrl}/${id}`)
+    .then((res) => res.data)
+    .catch((error) => {
+      console.error("Erreur getUserById", error);
+      return null;
+    });
+};
+
 export async function getAllUsers(): Promise<UserDto[]> {
   return axios
     .get<UserDto[]>(`${userUrl}/userDto`)
@@ -35,15 +45,25 @@ export const registerUser = async (
     });
 
 export const createUser = async (userData: Partial<User>): Promise<User> => {
-  return axios
-    .post<User>(`${userUrl}`, userData)
-    .then((res) => res.data)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .catch((error:any) => {
-      const err = error?.response?.data?.message;
-      throw new Error(err);
-    });
+  return (
+    axios
+      .post<User>(`${userUrl}/register`, userData)
+      .then((res) => res.data)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .catch((error: any) => {
+        const err = error?.response?.data?.message;
+        throw new Error(err);
+      })
+  );
 };
+
+export async function updateUser(userData: Partial<User>): Promise<User> {
+  return axios
+    .put<User>(`${userUrl}/${userData.id}`, userData)
+    .then((response) => {
+      return response.data;
+    });
+}
 
 export async function loginUser(loginData: Partial<LoginDto>): Promise<User> {
   return (

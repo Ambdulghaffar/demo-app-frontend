@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -14,10 +14,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { createUser } from "@/lib/user/services/user.services";
+import { updateUser } from "@/lib/user/services/user.services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/route";
+import { User } from "@/lib/user/models/user.models";
 import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
@@ -46,27 +47,31 @@ const formSchema = z.object({
   }),
 });
 
-export default function CreateUser() {
+interface EditUserProps {
+  editUser: User;
+}
+
+export default function EditUser({ editUser }: EditUserProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = React.useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: "",
-      phone: "",
-      address: "",
+      username: editUser.username,
+      email: editUser.email,
+      phone: editUser.phone,
+      address: editUser.address,
       password: "",
     },
   });
 
   // Soumission du formulaire
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const user = await createUser(values);
+      const user = await updateUser({id: editUser.id, ...values});
       if (user) {
-        toast.success(`Utilisateur ajouté avec succès !`, {
+        toast.success(`Informations modifiées avec succès !`, {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -79,7 +84,6 @@ export default function CreateUser() {
       setLoading(false);
       router.push(ROUTES.DASHBOARD_USERS);
       form.reset();
-      
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(
@@ -96,11 +100,12 @@ export default function CreateUser() {
       );
     }
     setLoading(false);
+    
   };
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-6">Ajouter un utilisateur</h2>
+      <h2 className="text-2xl font-semibold mb-6">Editer un utilisateur</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -202,7 +207,7 @@ export default function CreateUser() {
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
             >
-              <span>Ajouter</span>
+              <span>Modifer</span>
               {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin"/>}
             </Button>
           </div>
