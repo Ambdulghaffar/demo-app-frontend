@@ -4,6 +4,6 @@ export const ROUTES={
     REGISTER:"/register",
     CONTACT:"/contact",
     DASHBOARD:"/dashboard",
-    USERS:"/dashboard/users/list-users",
-    CREATE_USERS:"/dashboard/users/create-users"
+    DASHBOARD_USERS:"/dashboard/users",
+    DASHBOARD_CREATE_USERS:"/dashboard/users/create-users"
 } as const

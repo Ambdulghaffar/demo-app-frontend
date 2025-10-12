@@ -34,6 +34,17 @@ export const registerUser = async (
       throw new Error(err);
     });
 
+export const createUser = async (userData: Partial<User>): Promise<User> => {
+  return axios
+    .post<User>(`${userUrl}`, userData)
+    .then((res) => res.data)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .catch((error:any) => {
+      const err = error?.response?.data?.message;
+      throw new Error(err);
+    });
+};
+
 export async function loginUser(loginData: Partial<LoginDto>): Promise<User> {
   return (
     axios

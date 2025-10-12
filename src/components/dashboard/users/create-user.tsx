@@ -14,7 +14,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-// import { createUser } from "@/lib/user/services/user.services"; // (à activer quand tu connecteras l’API)
+import { createUser } from "@/lib/user/services/user.services";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/utils/route";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -40,40 +43,64 @@ const formSchema = z.object({
   password: z.string().min(8, {
     message: "Le mot de passe doit contenir au moins 8 caractères.",
   }),
-  confirmPassword: z.string().min(8, {
-    message: "Le mot de passe doit etre identique.",
-  }),
 });
 
 export default function CreateUser() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       email: "",
       phone: "",
-      password: "",
       address: "",
-      confirmPassword: "",
+      password: "",
     },
   });
 
   // Soumission du formulaire
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Formulaire soumis :", values);
+    try {
+      const user = await createUser(values);
+      if (user) {
+        toast.success(`Utilisateur ajouté avec succès !`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+      router.push(ROUTES.DASHBOARD_USERS);
+      form.reset();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(
+        `Erreur lors de l'ajout de l'utilisateur : ${error.message}`,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }
+      );
+    }
   };
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Ajouter un utilisateur</h2>
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6 bg-muted/40 p-6 rounded-xl shadow-sm"
         >
           <div className="grid grid-cols-2 gap-4">
-            {/* Nom d'utilisateur */}
             <FormField
               control={form.control}
               name="username"
@@ -90,8 +117,6 @@ export default function CreateUser() {
                 </FormItem>
               )}
             />
-
-            {/* Email */}
             <FormField
               control={form.control}
               name="email"
@@ -114,44 +139,39 @@ export default function CreateUser() {
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
-                      {/* Téléphone */}
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Téléphone</FormLabel>
-                <FormControl>
-                  <Input type="tel" placeholder="+212600000000" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Entrez le numéro de téléphone de l’utilisateur.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Adresse */}
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Adresse</FormLabel>
-                <FormControl>
-                  <Input placeholder="Rue, ville, pays" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Entrez l’adresse de l’utilisateur.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Téléphone</FormLabel>
+                  <FormControl>
+                    <Input type="tel" placeholder="+212600000000" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Entrez le numéro de téléphone de l’utilisateur.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Adresse</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Rue, ville, pays" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Entrez l’adresse de l’utilisateur.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-                      {/* Mot de passe */}
           <FormField
             control={form.control}
             name="password"
@@ -168,26 +188,6 @@ export default function CreateUser() {
               </FormItem>
             )}
           />
-          {/*confirmer Mot de passe */}
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirmer mot de passe</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="********" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Le mot de passe doit être identique.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          </div>
-
-          {/* Boutons */}
           <div className="flex justify-end gap-3 pt-4">
             <Button type="reset" variant="outline" onClick={() => form.reset()}>
               Réinitialiser

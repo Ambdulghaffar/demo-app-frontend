@@ -11,18 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ListFilter, MoreHorizontal, Pen, Plus, Trash } from "lucide-react";
+import { ListFilter, Pen, Plus } from "lucide-react";
 import { UserDto } from "@/lib/user/models/user.models";
 import { deleteUser, getAllUsers } from "@/lib/user/services/user.services";
 import { toast } from "react-toastify";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { ROUTES } from "@/utils/route";
+import ConfirmationDialog from "@/components/confirmation-dialog";
 
 export default function ListUsers() {
   const [data, setData] = useState<UserDto[]>([]);
@@ -37,37 +32,17 @@ export default function ListUsers() {
   };
 
   const handleDeleteUser = async (userId: number) => {
-    const confirmDelete = confirm(
-      "Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
-    );
-    if (!confirmDelete) return;
-    try {
-      await deleteUser(userId);
-      toast.success(`Utilisateur ${userId} est supprimé avec succès !`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      fetchData(); // Rafraîchir la liste des utilisateurs après la suppression
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'utilisateur:", error);
-      toast.error(
-        "Une erreur est survenue lors de la suppression de l'utilisateur.",
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        }
-      );
-    }
+    await deleteUser(userId);
+    toast.success(`Utilisateur supprimé avec succès !`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+    fetchData(); // Rafraîchir la liste des utilisateurs après la suppression
   };
 
   return (
@@ -77,7 +52,7 @@ export default function ListUsers() {
         <div className="flex gap-4">
           <Button className="flex items-center bg-blue-600 hover:bg-blue-700 text-white">
             <Link
-              href={ROUTES.CREATE_USERS}
+              href={ROUTES.DASHBOARD_CREATE_USERS}
               className="flex items-center gap-2"
             >
               <Plus />
@@ -120,41 +95,19 @@ export default function ListUsers() {
               <TableCell>{user.address}</TableCell>
               <TableCell>{user.createdAt}</TableCell>
               <TableCell className="ps-5">
-                <ButtonActions userId={user.id} onDelete={handleDeleteUser} />
+                <div className="flex item-center gap-3">
+                  <Link href={"#"}>
+                    <Pen color="blue" size={16} />
+                  </Link>
+                  <ConfirmationDialog
+                    onConfirm={() => handleDeleteUser(user.id)}
+                  />
+                </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </div>
-  );
-}
-
-function ButtonActions({
-  userId,
-  onDelete,
-}: {
-  userId: number;
-  onDelete: (id: number) => void;
-}) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <MoreHorizontal />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="ps-2">
-        <DropdownMenuItem className="text-blue-500">
-          <Pen color="blue" />
-          Modifier
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="text-red-500"
-          onClick={() => onDelete(userId)}
-        >
-          <Trash color="red" />
-          Supprimer
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

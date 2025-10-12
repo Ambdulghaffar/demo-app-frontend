@@ -22,11 +22,11 @@ export const NavMainAdmin = [
     items: [
       {
         title: "Liste des utilisateurs",
-        url: ROUTES.USERS,
+        url: ROUTES.DASHBOARD_USERS,
       },
       {
         title: "Ajouter un utilisateur",
-        url: ROUTES.CREATE_USERS,
+        url: ROUTES.DASHBOARD_CREATE_USERS,
       },
       {
         title: "Rôles & permissions",

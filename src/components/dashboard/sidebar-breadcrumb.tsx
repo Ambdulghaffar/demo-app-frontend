@@ -10,6 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
 import ModeToggle from "../mode-toggle";
+import { ROUTES } from "@/utils/route";
 
 type breadcrumbProps = {
   label?: string;
@@ -28,7 +29,7 @@ export default function SidebarBreadcrumb({label}:breadcrumbProps) {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">
+                <BreadcrumbLink href={ROUTES.DASHBOARD}>
                  Tableau de bord
                 </BreadcrumbLink>
               </BreadcrumbItem>
