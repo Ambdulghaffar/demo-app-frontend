@@ -2,7 +2,9 @@ import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 type SpringLoginResponse = {
-	token: string;
+	accessToken: string;
+	refreshToken: string;
+	expiresIn: number;
 	email: string;
 	role: string;
 };
@@ -52,7 +54,7 @@ export const authOptions: NextAuthOptions = {
 
 				const data = (await response.json()) as Partial<SpringLoginResponse>;
 
-				if (!data.token || !data.email || !data.role) {
+				if (!data.accessToken || !data.refreshToken || !data.email || !data.role || !data.expiresIn) {
 					return null;
 				}
 
@@ -61,7 +63,9 @@ export const authOptions: NextAuthOptions = {
 					email: data.email,
 					name: data.email,
 					roles: [data.role],
-					accessToken: data.token,
+					accessToken: data.accessToken,
+					refreshToken: data.refreshToken,
+					expiresIn: data.expiresIn,
 				};
 			},
 		}),
@@ -74,10 +78,48 @@ export const authOptions: NextAuthOptions = {
 				token.name = user.name;
 				token.roles = user.roles;
 				token.accessToken = user.accessToken;
+				token.refreshToken = user.refreshToken;
+				token.expiresAt = Date.now() + (user.expiresIn * 1000);
 				return token;
 			}
 
-			// Refresh token flow is intentionally disabled for now.
+			// Check if access token is expired
+			if (token.expiresAt && Date.now() >= token.expiresAt) {
+				try {
+					const apiBaseUrl = process.env.INV_MGT_BASEURL ?? defaultApiBaseUrl;
+					const refreshEndpoint = `${apiBaseUrl}/auth/refresh`;
+
+					const response = await fetch(refreshEndpoint, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							refreshToken: token.refreshToken,
+						}),
+					});
+
+					if (response.ok) {
+						const data = (await response.json()) as Partial<SpringLoginResponse>;
+						if (data.accessToken && data.refreshToken && data.expiresIn) {
+							token.accessToken = data.accessToken;
+							token.refreshToken = data.refreshToken;
+							token.expiresAt = Date.now() + (data.expiresIn * 1000);
+						} else {
+							// Invalid response, force logout
+							throw new Error("Invalid refresh response");
+						}
+					} else {
+						// Refresh failed, force logout
+						throw new Error("Refresh token failed");
+					}
+				} catch (error) {
+					console.error("Error refreshing token:", error);
+					// Force logout on error
+					throw new Error("Token refresh failed");
+				}
+			}
+
 			return token;
 		},
 		async session({ session, token }) {
@@ -88,7 +130,7 @@ export const authOptions: NextAuthOptions = {
 				name: String(token.name ?? ""),
 				roles: Array.isArray(token.roles) ? token.roles : [],
 			};
-
+			session.accessToken = token.accessToken;
 			return session;
 		},
 	},
