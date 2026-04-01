@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AuthProvider from "@/components/providers/auth-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <AuthProvider>
+                  <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ToastContainer
             position="top-right"
             autoClose={5000}
@@ -47,6 +49,7 @@ export default function RootLayout({
 
           {children}
         </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

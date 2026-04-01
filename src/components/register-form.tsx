@@ -20,21 +20,24 @@ import { Input } from "@/components/ui/input";
 import { registerUser } from "@/lib/user/services/user.services";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/route";
-
-
+import { signIn } from "next-auth/react";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
     message: "Le nom d'utilisateur doit contenir au moins 2 caractères.",
   }),
   email: z.email(),
-  phone: z.string()
+  phone: z
+    .string()
     .min(10, {
       message: "Le numéro de téléphone doit contenir au moins 10 chiffres.",
     })
-    .regex(/^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/, {
-      message: "Veuillez entrer un numéro de téléphone valide.",
-    }),
+    .regex(
+      /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/,
+      {
+        message: "Veuillez entrer un numéro de téléphone valide.",
+      },
+    ),
   password: z.string().min(8, {
     message: "Le mot de passe doit contenir au moins 8 caractères.",
   }),
@@ -43,9 +46,7 @@ const FormSchema = z.object({
   }),
 });
 
-
 export function RegisterForm() {
-
   const route = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -53,7 +54,7 @@ export function RegisterForm() {
     defaultValues: {
       username: "",
       email: "",
-      phone:"",
+      phone: "",
       password: "",
       address: "",
     },
@@ -63,17 +64,27 @@ export function RegisterForm() {
     try {
       const user = await registerUser(data);
       if (user) {
-        toast.success("Inscription réussie !", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
+        const result = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
         });
-        route.push(ROUTES.DASHBOARD);
-        form.reset();
+        if (result?.ok) {
+          toast.success("Inscription réussie !", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          route.push(ROUTES.DASHBOARD);
+          route.refresh();
+          form.reset();
+        } else {
+          route.push(ROUTES.LOGIN);
+        }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -128,8 +139,8 @@ export function RegisterForm() {
               <FormMessage />
             </FormItem>
           )}
-        />       
-         {/* Téléphone */}
+        />
+        {/* Téléphone */}
         <FormField
           control={form.control}
           name="phone"
@@ -183,7 +194,7 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">S&apos;inscrire</Button>
+        <Button type="submit" className="cursor-pointer">S&apos;inscrire</Button>
       </form>
     </Form>
   );

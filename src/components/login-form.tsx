@@ -16,9 +16,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginUser } from "@/lib/user/services/user.services";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/route";
+import { signIn } from "next-auth/react";
 
 const FormSchema = z.object({
   email: z.string().min(2, {
@@ -42,8 +42,13 @@ export function LoginForm() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const user = await loginUser(data);
-      if (user) {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result?.ok) {
         toast.success("Connexion réussie !", {
           position: "top-right",
           autoClose: 3000,
@@ -55,6 +60,16 @@ export function LoginForm() {
         });
         route.push(ROUTES.DASHBOARD);
         form.reset();
+      } else {
+        toast.error("Email ou mot de passe invalide.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -107,7 +122,7 @@ export function LoginForm() {
           )}
         />
 
-        <Button type="submit">Se connecter</Button>
+        <Button type="submit" className="cursor-pointer">Se connecter</Button>
       </form>
     </Form>
   );
