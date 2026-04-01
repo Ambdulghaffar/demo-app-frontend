@@ -10,7 +10,7 @@ import {
 } from "./ui/card";
 import ModeToggle from "./mode-toggle";
 import Link from "next/link";
-import { ROUTES } from "@/utils/route";
+import { ROUTES } from "@/constants/route";
 
 export default function Header() {
   return (

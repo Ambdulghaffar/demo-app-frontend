@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ROUTES } from "@/utils/route";
+import { ROUTES } from "@/constants/route";
 import { AlertCircleIcon, ArrowBigLeft } from "lucide-react";
 import Link from "next/link";
 import React from "react";

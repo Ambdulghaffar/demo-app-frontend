@@ -10,7 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
 import ModeToggle from "../mode-toggle";
-import { ROUTES } from "@/utils/route";
+import { ROUTES } from "@/constants/route";
 
 type breadcrumbProps = {
   label?: string;

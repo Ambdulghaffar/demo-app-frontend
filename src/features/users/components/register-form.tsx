@@ -17,9 +17,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { registerUser } from "@/lib/user/services/user.services";
+import { registerUser } from "@/features/users/services/user.services";
 import { useRouter } from "next/navigation";
-import { ROUTES } from "@/utils/route";
+import { ROUTES } from "@/constants/route";
 import { signIn } from "next-auth/react";
 
 const FormSchema = z.object({

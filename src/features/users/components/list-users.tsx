@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ListFilter, Pen, Plus } from "lucide-react";
-import { UserDto } from "@/lib/user/models/user.models";
-import { deleteUser, getAllUsers } from "@/lib/user/services/user.services";
+import { UserDto } from "@/features/users/types/user.types";
+import { deleteUser, getAllUsers } from "@/features/users/services/user.services";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { ROUTES } from "@/utils/route";
+import { ROUTES } from "@/constants/route";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 
 export default function ListUsers() {
