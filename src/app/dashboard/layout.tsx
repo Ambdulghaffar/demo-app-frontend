@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { authOptions } from "@/lib/auth/auth";
-import SessionGuard from "@/components/auth/session-guard";
+import SessionGuard from "@/features/auth/session-guard";
 
 export const metadata: Metadata = {
   title: "Create Next App",

@@ -1,4 +1,4 @@
-import environment from "../environment.config";
+import environment from "../../config/environment.config";
 
 
 const { http: httpConfig } = environment;

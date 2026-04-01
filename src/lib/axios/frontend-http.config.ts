@@ -1,7 +1,7 @@
 "use client";
 
 import environment from "../environment.config";
-import { baseRequestConfig } from "./base-request.config";
+import { baseRequestConfig } from "../../lib/axios/base-request.config";
 import axios from "axios";
 
 const { apiProxyBase } = environment;

@@ -1,6 +1,6 @@
 import SidebarBreadcrumb from "@/components/dashboard/sidebar-breadcrumb";
-import EditUser from "@/components/dashboard/users/edit-user";
-import { getUserById } from "@/lib/user/services/user.services";
+import EditUser from "@/features/users/components/edit-user";
+import { getUserById } from "@/features/users/services/user.services";
 import React from "react";
 import NotFound from "./not-found";
 

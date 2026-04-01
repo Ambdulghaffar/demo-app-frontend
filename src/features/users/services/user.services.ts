@@ -1,7 +1,7 @@
 "use server";
 
 import axios from "axios";
-import { LoginDto, RegisterDto, User, UserDto } from "../models/user.models";
+import { LoginDto, RegisterDto, User, UserDto } from "../types/user.types";
 import environment from "@/config/environment.config";
 import { AuthResponse } from "@/types/auth.types";
 

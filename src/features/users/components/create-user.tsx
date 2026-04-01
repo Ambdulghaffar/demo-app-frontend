@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { createUser } from "@/lib/user/services/user.services";
+import { createUser } from "@/features/users/services/user.services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { ROUTES } from "@/utils/route";
+import { ROUTES } from "@/constants/route";
 import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
