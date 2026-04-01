@@ -1,13 +1,8 @@
+import { AuthResponse } from "@/types/auth.types";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-type SpringLoginResponse = {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  email: string;
-  role: string;
-};
+
 
 const defaultApiBaseUrl = "http://localhost:8080/api";
 
@@ -52,7 +47,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const data = (await response.json()) as Partial<SpringLoginResponse>;
+        const data = (await response.json()) as Partial<AuthResponse>;
 
         if (
           !data.accessToken ||
@@ -112,7 +107,7 @@ export const authOptions: NextAuthOptions = {
 
           if (response.ok) {
             const data =
-              (await response.json()) as Partial<SpringLoginResponse>;
+              (await response.json()) as Partial<AuthResponse>;
             return {
               ...token,
               accessToken: data.accessToken,
