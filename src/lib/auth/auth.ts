@@ -1,4 +1,4 @@
-import { AuthResponse } from "@/types/auth.types";
+import { AuthResponse } from "@/features/auth/types/auth.types";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 

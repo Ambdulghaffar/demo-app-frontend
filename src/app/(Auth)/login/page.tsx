@@ -1,4 +1,4 @@
-import { LoginForm } from '@/features/users/components/login-form'
+import { LoginForm } from '@/features/auth/components/login-form'
 import React from 'react'
 
 export default function page() {
