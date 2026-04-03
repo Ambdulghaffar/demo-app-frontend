@@ -1,13 +1,12 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import type { Metadata } from "next";
-import "react-toastify/dist/ReactToastify.css";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { authOptions } from "@/lib/auth/auth";
-import SessionGuard from "@/features/auth/session-guard";
+import SessionGuard from "@/features/auth/components/session-guard";
 
 export const metadata: Metadata = {
   title: "Create Next App",
