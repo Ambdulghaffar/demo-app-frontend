@@ -20,7 +20,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavMainAdmin } from "@/utils/nav-main-admin";
+import { NavMainAdmin } from "@/constants/nav-main-admin";
+
 
 // This is sample data.
 const data = {

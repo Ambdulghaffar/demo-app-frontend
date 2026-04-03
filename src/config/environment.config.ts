@@ -1,24 +1,23 @@
-const INV_MGT_BASEURL =
-  process.env.INV_MGT_BASEURL ?? "http://localhost:8080/api";
-const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ?? "http://localhost:3000";
+// On récupère l'URL avec le préfixe NEXT_PUBLIC
+const INV_MGT_BASEURL = process.env.NEXT_PUBLIC_INV_MGT_BASEURL ?? "http://localhost:8080/api";
+
 const environment = {
-  name: process.env.ENV,
-  baseUrl: BASE_URL,
-  apiProxyBase: `/api-proxy`,
+  name: process.env.NODE_ENV, // 'development' ou 'production' automatiquement
+  baseUrl: process.env.NEXT_PUBLIC_WEBSITE_URL ?? "http://localhost:3000",
   api: {
     rest: {
+      // On définit une baseUrl racine pour simplifier Axios
+      baseUrl: INV_MGT_BASEURL, 
       endpoints: {
-        // Inventory Management Service
         users: `${INV_MGT_BASEURL}/user`,
         auth: `${INV_MGT_BASEURL}/auth`,
+        // On pourra ajouter categories: `${INV_MGT_BASEURL}/categories` ici plus tard
       },
     },
   },
   http: {
     request: {
-      timeout: Number.parseInt(
-        process.env.HTTP_REQUEST_TIMEOUT_MILLISECONDS ?? "60000"
-      ),
+      timeout: Number.parseInt(process.env.NEXT_PUBLIC_HTTP_TIMEOUT ?? "60000"),
     },
   },
 } as const;

@@ -1,10 +1,8 @@
+import environment from "@/config/environment.config";
 import { AuthResponse } from "@/features/auth/types/auth.types";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-
-
-const defaultApiBaseUrl = "http://localhost:8080/api";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
@@ -29,7 +27,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const apiBaseUrl = process.env.INV_MGT_BASEURL ?? defaultApiBaseUrl;
+        const apiBaseUrl = environment.api.rest.baseUrl;
         const loginEndpoint = `${apiBaseUrl}/auth/login`;
 
         const response = await fetch(loginEndpoint, {
@@ -92,7 +90,7 @@ export const authOptions: NextAuthOptions = {
       // ÉTAPE C : Le Token a expiré, on tente le Refresh
       if (token.expiresAt && Date.now() >= token.expiresAt) {
         try {
-          const apiBaseUrl = process.env.INV_MGT_BASEURL ?? defaultApiBaseUrl;
+          const apiBaseUrl = environment.api.rest.baseUrl;
           const refreshEndpoint = `${apiBaseUrl}/auth/refresh`;
 
           const response = await fetch(refreshEndpoint, {

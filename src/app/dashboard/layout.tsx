@@ -1,6 +1,5 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import type { Metadata } from "next";
-import "react-toastify/dist/ReactToastify.css";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
