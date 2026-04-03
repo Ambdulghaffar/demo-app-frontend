@@ -4,7 +4,7 @@ import environment from "@/config/environment.config";
 
 // 1. Définition de la configuration de base (récupérée de tes anciens fichiers)
 const baseRequestConfig = {
-  baseURL: environment.api.rest.endpoints.auth.replace("/auth", ""), // Donne http://localhost:8080/api
+  baseURL: environment.api.rest.baseUrl,
   timeout: environment.http.request.timeout,
   headers: {
     Accept: "application/json",

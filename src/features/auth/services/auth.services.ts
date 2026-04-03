@@ -1,43 +1,16 @@
 "use server";
 
-import axios from "axios";
-import environment from "@/config/environment.config";
-import { AuthResponse, LoginDto, RegisterDto } from "@/features/auth/types/auth.types";
+import { AuthResponse, RegisterDto } from "@/features/auth/types/auth.types";
+import apiClient from "@/lib/axios/api-client";
+import { AUTH_ENDPOINTS } from "../constants/auth.endpoints";
+import { handleApiError } from "@/lib/handle-api-error";
 
-const {
-  api: {
-    rest: {
-      endpoints: { auth: authUrl }
-    },
-  },
-} = environment;
 
-export const registerUser = async (
-  userData: Partial<RegisterDto>
-): Promise<AuthResponse> => {
+export const registerUser = async (userData: Partial<RegisterDto>): Promise<AuthResponse> => {
   try {
-    const { data } = await axios.post<AuthResponse>(`${authUrl}/register`, userData);
+    const {data} = await apiClient.post<AuthResponse>(AUTH_ENDPOINTS.register, userData);
     return data;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    const err = error?.response?.data?.message || "Erreur lors de l'inscription";
-    throw new Error(err);
+  } catch (error) {
+    return handleApiError(error,"registerUser");
   }
 };
-
-
-// pas utilsé pour le moment, car on utilise la route /auth/login pour se connecter avec next-auth
-export async function loginUser(loginData: Partial<LoginDto>): Promise<AuthResponse> {
-  return (
-    axios
-      .post<AuthResponse>(`${authUrl}/login`, loginData)
-      .then((response) => {
-        return response.data;
-      })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .catch((error: any) => {
-        const err = error?.response?.data?.message;
-        throw new Error(err);
-      })
-  );
-}

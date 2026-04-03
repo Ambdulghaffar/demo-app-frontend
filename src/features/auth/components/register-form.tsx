@@ -17,10 +17,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { registerUser } from "@/features/users/services/user.services";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/route";
 import { signIn } from "next-auth/react";
+import { registerUser } from "../services/auth.services";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
