@@ -64,39 +64,26 @@ export function RegisterForm() {
     try {
       const user = await registerUser(data);
       if (user) {
+        console.log("✅ Register OK, tentative signIn...");
         const result = await signIn("credentials", {
           email: data.email,
           password: data.password,
           redirect: false,
         });
+        console.log("🔐 signIn result:", result); // ← log ici
         if (result?.ok) {
-          toast.success("Inscription réussie !", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          toast.success("Inscription réussie !");
           route.push(ROUTES.DASHBOARD);
           route.refresh();
           form.reset();
         } else {
+          console.log("❌ signIn échoué, error:", result?.error);
           route.push(ROUTES.LOGIN);
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(`Erreur: ${error.message}`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      toast.error(`Erreur: ${error.message}`);
     }
   }
 

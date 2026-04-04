@@ -1,5 +1,5 @@
 // On récupère l'URL avec le préfixe NEXT_PUBLIC
-const INV_MGT_BASEURL = process.env.NEXT_PUBLIC_INV_MGT_BASEURL ?? "http://localhost:8080/api";
+const INV_MGT_BASEURL = process.env.NEXT_PUBLIC_INV_MGT_BASEURL ?? "/api";
 
 const environment = {
   name: process.env.NODE_ENV, // 'development' ou 'production' automatiquement
