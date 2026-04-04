@@ -1,5 +1,5 @@
 // On récupère l'URL avec le préfixe NEXT_PUBLIC
-const INV_MGT_BASEURL = process.env.NEXT_PUBLIC_INV_MGT_BASEURL ?? "http://localhost:8080/api";
+const INV_MGT_BASEURL = process.env.NEXT_PUBLIC_INV_MGT_BASEURL ?? "/api";
 
 const environment = {
   name: process.env.NODE_ENV, // 'development' ou 'production' automatiquement
@@ -9,9 +9,8 @@ const environment = {
       // On définit une baseUrl racine pour simplifier Axios
       baseUrl: INV_MGT_BASEURL, 
       endpoints: {
-        users: `${INV_MGT_BASEURL}/user`,
-        auth: `${INV_MGT_BASEURL}/auth`,
-        // On pourra ajouter categories: `${INV_MGT_BASEURL}/categories` ici plus tard
+        users: `/user`,
+        auth: `/auth`
       },
     },
   },

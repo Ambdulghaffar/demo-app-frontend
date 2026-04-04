@@ -65,7 +65,8 @@ export const authOptions: NextAuthOptions = {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
           expiresIn: data.expiresIn,
-        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any; // On utilise "any" ici pour éviter les erreurs de type liées à la nature dynamique du token, mais on s'assure que les propriétés nécessaires sont présentes.
       },
     }),
   ],
@@ -76,7 +77,8 @@ export const authOptions: NextAuthOptions = {
         token.sub = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.roles = user.roles;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        token.roles = (user as any).roles;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         // Calcul du timestamp d'expiration : MAINTENANT + Durée du backend

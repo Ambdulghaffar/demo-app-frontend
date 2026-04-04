@@ -1,7 +1,8 @@
 import axios from "axios";
 import environment from "@/config/environment.config";
 
-const baseRequestConfig = {
+// Pas de getSession — pas de problème côté serveur
+export const apiPublicClient = axios.create({
   baseURL: environment.api.rest.baseUrl,
   timeout: environment.http.request.timeout,
   headers: {
@@ -11,20 +12,18 @@ const baseRequestConfig = {
     Pragma: "no-cache",
     Expires: "0",
   },
-};
+});
 
-export const apiClient = axios.create(baseRequestConfig);
-
-apiClient.interceptors.response.use(
+apiPublicClient.interceptors.response.use(
   (response) => {
-    console.log(`[API Response] Success: ${response.status}`);
+    console.log(`[Public API Response] Success: ${response.status}`);
     return response;
   },
   (error) => {
     const status = error.response?.status;
-    console.error(`[API Error] Status: ${status || "Network Error"}`);
+    console.error(`[Public API Error] Status: ${status || "Network Error"}`);
     return Promise.reject(error);
   }
 );
 
-export default apiClient;
+export default apiPublicClient;
