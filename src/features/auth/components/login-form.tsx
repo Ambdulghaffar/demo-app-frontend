@@ -126,7 +126,7 @@ export function LoginForm() {
                     type="password"
                     placeholder="••••••••"
                     {...field}
-                    className="py-6"
+                    className="py-6 text-black"
                   />
                 </FormControl>
                 <FormMessage />

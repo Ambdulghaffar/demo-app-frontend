@@ -9,7 +9,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
-import ModeToggle from "../mode-toggle";
 import { ROUTES } from "@/constants/route";
 
 type breadcrumbProps = {
@@ -39,9 +38,6 @@ export default function SidebarBreadcrumb({label}:breadcrumbProps) {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-        </div>
-        <div className="pe-4">
-          <ModeToggle/>
         </div>
       </header>
     </div>
