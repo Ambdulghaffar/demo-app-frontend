@@ -4,7 +4,7 @@ import { heroData } from "@/data/landing-page";
 
 export default function HeroSection() {
   return (
-    <section className="bg-gradient-to-r from-[#E53E3E] via-[#FFF5F0] to-white">
+    <section className="bg-gradient-to-r from-pink-400 via-pink-100 to-white">
       <div className="container mx-auto grid grid-cols-1 items-center gap-8 px-4 py-16 md:grid-cols-2 md:px-6 lg:gap-12">
         <div className="space-y-6">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">

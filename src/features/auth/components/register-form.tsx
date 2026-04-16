@@ -89,7 +89,7 @@ export function RegisterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
         {/* Nom complet */}
         <FormField
           control={form.control}
@@ -98,9 +98,12 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Nom complet</FormLabel>
               <FormControl>
-                <Input placeholder="Votre nom complet" {...field} />
+                <Input
+                  placeholder="Votre nom complet"
+                  {...field}
+                  className="py-6"
+                />
               </FormControl>
-              <FormDescription>Entrez votre nom et prénom.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -118,11 +121,9 @@ export function RegisterForm() {
                   type="email"
                   placeholder="exemple@domaine.com"
                   {...field}
+                  className="py-6"
                 />
               </FormControl>
-              <FormDescription>
-                Nous utiliserons cet email pour vous contacter.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -139,11 +140,9 @@ export function RegisterForm() {
                   type="tel"
                   placeholder="Votre numéro de téléphone"
                   {...field}
+                  className="py-6"
                 />
               </FormControl>
-              <FormDescription>
-                Nous utiliserons ce numéro de téléphone pour vous contacter.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -156,9 +155,12 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Adresse</FormLabel>
               <FormControl>
-                <Input placeholder="Adresse complète" {...field} />
+                <Input
+                  placeholder="Votre adresse complète"
+                  {...field}
+                  className="py-6"
+                />
               </FormControl>
-              <FormDescription>Entrez votre adresse complète.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -172,16 +174,24 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Mot de passe</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  {...field}
+                  className="py-6"
+                />
               </FormControl>
-              <FormDescription>
-                Choisissez un mot de passe sécurisé.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="cursor-pointer">S&apos;inscrire</Button>
+
+        <Button
+          type="submit"
+          className="w-full py-6 text-lg  bg-pink-400 hover:bg-pink-500 cursor-pointer"
+        >
+          Créer un compte
+        </Button>
       </form>
     </Form>
   );
