@@ -1,52 +1,143 @@
-import React from "react";
+"use client";
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import ModeToggle from "./mode-toggle";
+  CircleUser,
+  Menu,
+  Search,
+  ShoppingCart,
+  X,
+} from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { useSession } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { ROUTES } from "@/constants/route";
 
 export default function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session } = useSession();
+
+  const navLinks = [
+    { href: "/", label: "Accueil" },
+    { href: "/products", label: "Produits" },
+    { href: "/categories", label: "Catégories" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   return (
-    <Card className="px-10">
-      <CardHeader>
-        <CardTitle className="flex gap-8 items-center">
-          <Link href={ROUTES.HOME}>Acceuil</Link>
-          <Link href={ROUTES.REGISTER}>Inscription</Link>
-          <Link href={ROUTES.LOGIN}>Connexion</Link>
-          <Link href={ROUTES.CONTACT}>Contact</Link>
-        </CardTitle>
-        <CardDescription className="mt-4">
-          Bienvenue sur notre plateforme ! Ici, vous pouvez créer un compte,
-          vous connecter et accéder à nos fonctionnalités.
-        </CardDescription>
-        <CardAction>
-          <ModeToggle />
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <p>
-          Découvrez nos services et profitez d’une expérience personnalisée.
-          Inscrivez-vous dès maintenant pour bénéficier de toutes les
-          fonctionnalités disponibles.
-        </p>
-        <ul className="list-disc pl-5 mt-2">
-          <li>Gestion de compte facile</li>
-          <li>Accès sécurisé à vos données</li>
-          <li>Support et assistance disponibles 24/7</li>
-        </ul>
-      </CardContent>
-      <CardFooter>
-        <p className="text-sm text-muted-foreground">
-          © 2025 MonApplication. Tous droits réservés. Suivez-nous sur nos réseaux sociaux pour rester informé des nouveautés.
-        </p>
-      </CardFooter>
-    </Card>
+    <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+        <Link href="/" className="text-2xl font-bold text-gray-900">
+          StockFlow
+        </Link>
+
+        <nav className="hidden items-center space-x-6 md:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center space-x-4">
+          <div className="hidden md:flex">
+            <Search className="h-5 w-5 text-gray-600" />
+          </div>
+          <ShoppingCart className="h-5 w-5 text-gray-600" />
+
+          {session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <CircleUser className="h-8 w-8" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {session.user?.name}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {session.user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link href={ROUTES.DASHBOARD}>Tableau de bord</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>Profil</DropdownMenuItem>
+                <DropdownMenuItem>Facturation</DropdownMenuItem>
+                <DropdownMenuItem>Paramètres</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Se déconnecter</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="hidden items-center space-x-2 md:flex">
+              <Button asChild variant="ghost">
+                <Link href={ROUTES.LOGIN}>Se connecter</Link>
+              </Button>
+              <Button asChild>
+                <Link href={ROUTES.REGISTER}>S&apos;inscrire</Link>
+              </Button>
+            </div>
+          )}
+
+          <button
+            className="md:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {menuOpen && (
+        <div className="border-t bg-white md:hidden">
+          <nav className="flex flex-col space-y-2 p-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="border-t pt-4">
+              {!session && (
+                <div className="flex flex-col space-y-2">
+                  <Button asChild variant="outline">
+                    <Link href={ROUTES.LOGIN}>Se connecter</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href={ROUTES.REGISTER}>S&apos;inscrire</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
+    </header>
   );
 }

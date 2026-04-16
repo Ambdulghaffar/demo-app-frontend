@@ -44,23 +44,23 @@ const data = {
     {
       name: "Evil Corp.",
       logo: Command,
-      plan: "Free",
+      plan: "Gratuit",
     },
   ],
   navMain: NavMainAdmin,
   projects: [
     {
-      name: "Design Engineering",
+      name: "Ingénierie de conception",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      name: "Ventes et marketing",
       url: "#",
       icon: PieChart,
     },
     {
-      name: "Travel",
+      name: "Voyage",
       url: "#",
       icon: Map,
     },
