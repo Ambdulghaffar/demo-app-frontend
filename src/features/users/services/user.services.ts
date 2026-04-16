@@ -2,20 +2,15 @@ import { User, UserDto } from "../types/user.types";
 import apiClient from "@/lib/axios/api-client";
 import { handleApiError } from "@/lib/axios/handle-api-error";
 import { USERS_ENDPOINTS } from "../constants/users.endpoints";
-import { getAuthHeaders } from "@/lib/auth/get-auth-headers";
+import { getAuthHeaders } from "@/lib/auth/auth-helpers";
 
 export const getAllUsers = async (): Promise<UserDto[]> => {
-  console.log("🚀 getAllUsers appelé");
-  console.log("🔗 baseURL:", apiClient.defaults.baseURL);
-  console.log("🌐 endpoint:", USERS_ENDPOINTS.dto);
   try {
     const { data } = await apiClient.get<UserDto[]>(USERS_ENDPOINTS.dto, {
       headers: await getAuthHeaders(),
     });
-    console.log("✅ getAllUsers succès:", data);
     return data;
   } catch (error) {
-    console.log("❌ erreur brute:", error);
     return handleApiError(error, "getAllUsers");
   }
 };
@@ -55,8 +50,11 @@ export const updateUser = async (userData: Partial<User>): Promise<User> => {
 
 export const deleteUser = async (id: number): Promise<void> => {
   try {
-    await apiClient.delete<void>(USERS_ENDPOINTS.byId(id));
+    await apiClient.delete(USERS_ENDPOINTS.byId(id), {
+      headers: await getAuthHeaders(),
+    });
   } catch (error) {
-    return handleApiError(error, "deleteUser");
+    console.error(`Error deleting user with id ${id}:`, error);
+    return handleApiError(error, `deleteUser (id: ${id})`);
   }
 };

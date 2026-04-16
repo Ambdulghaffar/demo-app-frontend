@@ -1,7 +1,7 @@
 import axios from "axios";
 import environment from "@/config/environment.config";
 
-const baseRequestConfig = {
+export const apiClient = axios.create({
   baseURL: environment.api.rest.baseUrl,
   timeout: environment.http.request.timeout,
   headers: {
@@ -11,15 +11,10 @@ const baseRequestConfig = {
     Pragma: "no-cache",
     Expires: "0",
   },
-};
-
-export const apiClient = axios.create(baseRequestConfig);
+});
 
 apiClient.interceptors.response.use(
-  (response) => {
-    console.log(`[API Response] Success: ${response.status}`);
-    return response;
-  },
+  (response) => response,
   (error) => {
     const status = error.response?.status;
     console.error(`[API Error] Status: ${status || "Network Error"}`);

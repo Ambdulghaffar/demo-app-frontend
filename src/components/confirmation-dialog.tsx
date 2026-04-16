@@ -15,14 +15,16 @@ import { Trash } from "lucide-react";
 
 type ConfirmationDialogProps = {
   onConfirm: () => void;
+  disabled?: boolean;
 };
 
 export default function ConfirmationDialog({
   onConfirm,
+  disabled = false,
 }: ConfirmationDialogProps) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger className="cursor-pointer">
         <Trash color="red" size={16} />
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -34,8 +36,10 @@ export default function ConfirmationDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Continuer</AlertDialogAction>
+          <AlertDialogCancel className="cursor-pointer">Annuler</AlertDialogCancel>
+          <AlertDialogAction className="cursor-pointer" onClick={onConfirm} disabled={disabled}>
+            Continuer
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

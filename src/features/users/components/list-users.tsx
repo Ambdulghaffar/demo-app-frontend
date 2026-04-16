@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useTransition } from "react";
 import { toast } from "react-toastify";
 import { Pen, Plus, ListFilter } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import {
   Table, TableBody, TableCaption, TableCell,
@@ -14,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import { ROUTES } from "@/constants/route";
 import { ApiError } from "@/types/api.types";
-import { deleteUser } from "@/features/users/services/user.services";
+import { deleteUserAction } from "@/features/users/actions/user.actions";
 import type { UserDto } from "@/features/users/types/user.types";
 
 interface ListUsersProps {
@@ -22,27 +21,33 @@ interface ListUsersProps {
 }
 
 export default function ListUsers({ initialData }: ListUsersProps) {
-  const router = useRouter();
-  const [data, setData] = useState<UserDto[]>(initialData); // initialisé avec les données du serveur
+  const [data, setData] = useState<UserDto[]>(initialData);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  
-  const handleDeleteUser = useCallback(async (userId: number) => {
+  const [isPending, startTransition] = useTransition();
+
+  const handleDeleteUser = (userId: number) => {
     setDeletingId(userId);
-    try {
-      await deleteUser(userId);
-      toast.success("Utilisateur supprimé avec succès !");
-      setData((prev) => prev.filter((u) => u.id !== userId));
-      router.refresh(); // ✅ revalide le Server Component parent
-    } catch (error) {
-      const message =
-        error instanceof ApiError
-          ? error.message
-          : "Erreur lors de la suppression";
-      toast.error(message);
-    } finally {
-      setDeletingId(null);
-    }
-  }, [router]);
+    startTransition(async () => {
+      // ✅ startTransition établit le bon contexte pour les Server Actions
+      try {
+        const result = await deleteUserAction(userId);
+        if (result.success) {
+          toast.success("Utilisateur supprimé avec succès !");
+          setData((prev) => prev.filter((u) => u.id !== userId));
+        } else {
+          toast.error(result.error || "Erreur lors de la suppression");
+        }
+      } catch (error) {
+        const message =
+          error instanceof ApiError
+            ? error.message
+            : "Erreur lors de la suppression";
+        toast.error(message);
+      } finally {
+        setDeletingId(null);
+      }
+    });
+  };
 
   return (
     <div className="p-6">
@@ -85,7 +90,10 @@ export default function ListUsers({ initialData }: ListUsersProps) {
             </TableRow>
           ) : (
             data.map((user) => (
-              <TableRow key={user.id} className={deletingId === user.id ? "opacity-50" : ""}>
+              <TableRow
+                key={user.id}
+                className={deletingId === user.id ? "opacity-50 pointer-events-none" : ""}
+              >
                 <TableCell className="text-center font-medium">{user.id}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -99,7 +107,7 @@ export default function ListUsers({ initialData }: ListUsersProps) {
                     </Link>
                     <ConfirmationDialog
                       onConfirm={() => handleDeleteUser(user.id)}
-                      //disabled={deletingId === user.id}
+                      disabled={isPending && deletingId === user.id}
                     />
                   </div>
                 </TableCell>
