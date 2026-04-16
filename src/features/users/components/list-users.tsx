@@ -76,6 +76,7 @@ export default function ListUsers({ initialData }: ListUsersProps) {
             <TableHead>Email</TableHead>
             <TableHead>Téléphone</TableHead>
             <TableHead>Adresse</TableHead>
+            <TableHead>Rôle</TableHead>
             <TableHead>Date de création</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -84,7 +85,7 @@ export default function ListUsers({ initialData }: ListUsersProps) {
         <TableBody>
           {data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
+              <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
                 Aucun utilisateur trouvé.
               </TableCell>
             </TableRow>
@@ -99,6 +100,7 @@ export default function ListUsers({ initialData }: ListUsersProps) {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.phone}</TableCell>
                 <TableCell>{user.address}</TableCell>
+                <TableCell>{user.role}</TableCell>
                 <TableCell>{user.createdAt}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">

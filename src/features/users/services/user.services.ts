@@ -29,6 +29,9 @@ export const createUser = async (userData: Partial<User>): Promise<User> => {
     const { data } = await apiClient.post<User>(
       USERS_ENDPOINTS.register,
       userData,
+      {
+        headers: await getAuthHeaders(),
+      },
     );
     return data;
   } catch (error) {
