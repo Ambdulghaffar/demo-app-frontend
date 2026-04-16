@@ -1,63 +1,68 @@
-"use server";
-
-import axios from "axios";
 import { User, UserDto } from "../types/user.types";
-import environment from "@/config/environment.config";
+import apiClient from "@/lib/axios/api-client";
+import { handleApiError } from "@/lib/axios/handle-api-error";
+import { USERS_ENDPOINTS } from "../constants/users.endpoints";
+import { getAuthHeaders } from "@/lib/auth/auth-helpers";
 
-const {
-  api: {
-    rest: {
-      endpoints: { users: userUrl }
-    },
-  },
-} = environment;
-
-
-export const getUserById = async (id: number): Promise<User | null> => {
-  return axios
-    .get<User>(`${userUrl}/${id}`)
-    .then((res) => res.data)
-    .catch((error) => {
-      console.error("Erreur getUserById", error);
-      return null;
+export const getAllUsers = async (): Promise<UserDto[]> => {
+  try {
+    const { data } = await apiClient.get<UserDto[]>(USERS_ENDPOINTS.dto, {
+      headers: await getAuthHeaders(),
     });
+    return data;
+  } catch (error) {
+    return handleApiError(error, "getAllUsers");
+  }
 };
 
-export async function getAllUsers(): Promise<UserDto[]> {
-  return axios
-    .get<UserDto[]>(`${userUrl}/userDto`)
-    .then((res) => res.data)
-    .catch((error) => {
-      console.error("Erreur getAllUsers", error);
-      return [];
+export const getUserById = async (id: number): Promise<User> => {
+  try {
+    const { data } = await apiClient.get<User>(USERS_ENDPOINTS.byId(id), {
+      headers: await getAuthHeaders(),
     });
-}
-
-
+    return data;
+  } catch (error) {
+    return handleApiError(error, `getUserById (id: ${id})`);
+  }
+};
 
 export const createUser = async (userData: Partial<User>): Promise<User> => {
-  return (
-    axios
-      .post<User>(`${userUrl}/register`, userData)
-      .then((res) => res.data)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .catch((error: any) => {
-        const err = error?.response?.data?.message || "Erreur lors de la création de l'utilisateur";
-        throw new Error(err);
-      })
-  );
+  try {
+    const { data } = await apiClient.post<User>(
+      USERS_ENDPOINTS.register,
+      userData,
+      {
+        headers: await getAuthHeaders(),
+      },
+    );
+    return data;
+  } catch (error) {
+    return handleApiError(error, "createUser");
+  }
 };
 
-export async function updateUser(userData: Partial<User>): Promise<User> {
-  return axios
-    .put<User>(`${userUrl}/${userData.id}`, userData)
-    .then((response) => {
-      return response.data;
-    });
-}
-
-
+export const updateUser = async (userData: Partial<User>): Promise<User> => {
+  try {
+    const { data } = await apiClient.put<User>(
+      USERS_ENDPOINTS.byId(userData.id!),
+      userData,
+      {
+        headers: await getAuthHeaders(),
+      },
+    );
+    return data;
+  } catch (error) {
+    return handleApiError(error, "updateUser");
+  }
+};
 
 export const deleteUser = async (id: number): Promise<void> => {
-  return axios.delete<void>(`${userUrl}/${id}`).then((res) => res.data);
+  try {
+    await apiClient.delete(USERS_ENDPOINTS.byId(id), {
+      headers: await getAuthHeaders(),
+    });
+  } catch (error) {
+    console.error(`Error deleting user with id ${id}:`, error);
+    return handleApiError(error, `deleteUser (id: ${id})`);
+  }
 };

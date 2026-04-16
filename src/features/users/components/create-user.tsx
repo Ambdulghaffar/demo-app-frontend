@@ -13,8 +13,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
-import { createUser } from "@/features/users/services/user.services";
+import { createUserAction } from "@/features/users/actions/user.actions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/route";
@@ -36,7 +43,7 @@ const formSchema = z.object({
       /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/,
       {
         message: "Veuillez entrer un numéro de téléphone valide.",
-      }
+      },
     ),
   address: z.string().min(2, {
     message: "L'adresse doit contenir au moins 2 caractères.",
@@ -44,6 +51,7 @@ const formSchema = z.object({
   password: z.string().min(8, {
     message: "Le mot de passe doit contenir au moins 8 caractères.",
   }),
+  role: z.enum(["ADMIN", "MANAGER", "CLIENT"]),
 });
 
 export default function CreateUser() {
@@ -57,43 +65,28 @@ export default function CreateUser() {
       phone: "",
       address: "",
       password: "",
+      role: "CLIENT",
     },
   });
 
   // Soumission du formulaire
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const user = await createUser(values);
-      if (user) {
-        toast.success(`Utilisateur ajouté avec succès !`, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+      const result = await createUserAction(values);
+      if (result.success) {
+        toast.success(`Utilisateur ajouté avec succès !`);
+        router.push(ROUTES.DASHBOARD_USERS);
+        form.reset();
+      } else {
+        toast.error(
+          `Erreur lors de l'ajout de l'utilisateur : ${result.error}`,
+        );
       }
-      setLoading(false);
-      router.push(ROUTES.DASHBOARD_USERS);
-      form.reset();
-      
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toast.error(
-        `Erreur lors de l'ajout de l'utilisateur : ${error.message}`,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        }
-      );
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Erreur inconnue";
+      toast.error(`Erreur lors de l'ajout de l'utilisateur : ${message}`);
     }
     setLoading(false);
   };
@@ -178,24 +171,59 @@ export default function CreateUser() {
               )}
             />
           </div>
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mot de passe</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="********" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Le mot de passe doit contenir au moins 8 caractères.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mot de passe</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="********" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Le mot de passe doit contenir au moins 8 caractères.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rôle</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez un rôle" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="CLIENT">Client</SelectItem>
+                      <SelectItem value="MANAGER">Manager</SelectItem>
+                      <SelectItem value="ADMIN">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Choisissez le rôle de l&apos;utilisateur.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <div className="flex justify-end gap-3 pt-4">
-            <Button type="reset" variant="outline" onClick={() => form.reset()} className="cursor-pointer">
+            <Button
+              type="reset"
+              variant="outline"
+              onClick={() => form.reset()}
+              className="cursor-pointer"
+            >
               Réinitialiser
             </Button>
             <Button
@@ -203,7 +231,7 @@ export default function CreateUser() {
               className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
             >
               <span>Ajouter</span>
-              {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin"/>}
+              {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
             </Button>
           </div>
         </form>
