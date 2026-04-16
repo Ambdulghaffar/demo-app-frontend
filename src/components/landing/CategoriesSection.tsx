@@ -7,7 +7,7 @@ export default function CategoriesSection() {
     <section className="py-16 sm:py-24">
       <div className="container mx-auto px-4 md:px-6">
         <div className="mb-12 flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Découvrez nos catégories
           </h2>
           <Button variant="outline">Toutes les catégories</Button>

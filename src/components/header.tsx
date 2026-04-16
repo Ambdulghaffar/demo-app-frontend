@@ -35,7 +35,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="text-2xl font-bold text-gray-900">
-          StockFlow
+          Électro-Chic
         </Link>
 
         <nav className="hidden items-center space-x-6 md:flex">
@@ -43,7 +43,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+              className="text-md font-medium text-gray-600 hover:text-gray-900"
             >
               {link.label}
             </Link>
@@ -54,7 +54,7 @@ export default function Header() {
           <div className="hidden md:flex">
             <Search className="h-5 w-5 text-gray-600" />
           </div>
-          <ShoppingCart className="h-5 w-5 text-gray-600" />
+          <ShoppingCart className="h-5 w-5 text-gray-600 cursor-pointer" />
 
           {session ? (
             <DropdownMenu>
@@ -87,10 +87,10 @@ export default function Header() {
             </DropdownMenu>
           ) : (
             <div className="hidden items-center space-x-2 md:flex">
-              <Button asChild variant="ghost">
+              <Button asChild variant="ghost" className="text-black border rounded-xl border-gray-300">
                 <Link href={ROUTES.LOGIN}>Se connecter</Link>
               </Button>
-              <Button asChild>
+              <Button asChild className="hover:bg-stone-300 border rounded-xl">
                 <Link href={ROUTES.REGISTER}>S&apos;inscrire</Link>
               </Button>
             </div>

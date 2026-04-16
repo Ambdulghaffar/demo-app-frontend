@@ -7,9 +7,9 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-12 md:px-6">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div>
-            <h3 className="text-lg font-semibold">TECHNOVA</h3>
+            <h3 className="text-lg font-semibold">Électro-Chic</h3>
             <p className="mt-2 text-sm text-gray-400">
-              Nous nous concentrons sur la qualité, la performance et une expérience d'achat transparente en laquelle vous pouvez avoir confiance.
+              Nous nous concentrons sur la qualité, la performance et une expérience d&apos;achat transparente en laquelle vous pouvez avoir confiance.
             </p>
             <div className="mt-4 flex space-x-4">
               <Link href="#" className="text-gray-400 hover:text-white">
@@ -46,7 +46,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="#" className="text-gray-400 hover:text-white">
-                  Centre d'aide
+                  Centre d&apos;aide
                 </Link>
               </li>
             </ul>
@@ -61,7 +61,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="#" className="text-gray-400 hover:text-white">
-                  Conditions d'utilisation
+                  Conditions d&apos;utilisation
                 </Link>
               </li>
               <li>
@@ -85,7 +85,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-gray-800 pt-6 text-center text-sm text-gray-500">
-          <p>&copy; 2023 TECHNOVA - Gadgets Premium. Tous droits réservés.</p>
+          <p>&copy; 2026 Électro-Chic - Gadgets Premium. Tous droits réservés.</p>
         </div>
       </div>
     </footer>

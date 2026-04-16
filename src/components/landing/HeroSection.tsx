@@ -10,15 +10,15 @@ export default function HeroSection() {
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
             {heroData.title}
           </h1>
-          <p className="text-lg text-gray-600">{heroData.subtitle}</p>
+          <p className="text-lg text-black">{heroData.subtitle}</p>
           <div className="flex flex-col gap-4 sm:flex-row">
             <Button
               size="lg"
-              className="bg-[#E53E3E] text-white hover:bg-[#C53030]"
+              className="bg-[#E53E3E] text-white hover:bg-[#C53030] cursor-pointer"
             >
               Acheter maintenant
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="cursor-pointer hover:bg-gray-400">
               Voir tous les gadgets
             </Button>
           </div>

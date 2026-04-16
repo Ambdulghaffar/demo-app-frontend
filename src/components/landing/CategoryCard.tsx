@@ -20,8 +20,8 @@ export default function CategoryCard({ name, image }: CategoryCardProps) {
         />
       </div>
       <div className="mt-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
-        <ArrowRight className="h-5 w-5 text-gray-500 transition-transform duration-300 group-hover:translate-x-1" />
+        <h3 className="text-lg font-semibold">{name}</h3>
+        <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
       </div>
     </Link>
   );
