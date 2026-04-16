@@ -8,6 +8,7 @@ import {
   Map,
   PieChart,
   School2,
+  ShoppingBag,
 } from "lucide-react";
 
 import { NavMain } from "@/components/dashboard/nav-main";
@@ -32,9 +33,9 @@ const data = {
   },
   teams: [
     {
-      name: "Groupe Scolaire Espoir",
-      logo: School2,
-      plan: "Etablissement",
+      name: "ElectroTech",
+      logo: ShoppingBag,
+      plan: "Boutique en ligne",
     },
     {
       name: "Acme Corp.",

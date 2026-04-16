@@ -90,7 +90,7 @@ export default function Header() {
               <Button asChild variant="ghost" className="text-black border rounded-xl border-gray-300">
                 <Link href={ROUTES.LOGIN}>Se connecter</Link>
               </Button>
-              <Button asChild className="hover:bg-stone-300 border rounded-xl">
+              <Button asChild className="border rounded-xl ">
                 <Link href={ROUTES.REGISTER}>S&apos;inscrire</Link>
               </Button>
             </div>

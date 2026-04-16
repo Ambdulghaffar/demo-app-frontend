@@ -18,7 +18,7 @@ export default function HeroSection() {
             >
               Acheter maintenant
             </Button>
-            <Button size="lg" variant="outline" className="cursor-pointer hover:bg-gray-400">
+            <Button size="lg" variant="outline" className="cursor-pointer hover:bg-stone-100">
               Voir tous les gadgets
             </Button>
           </div>

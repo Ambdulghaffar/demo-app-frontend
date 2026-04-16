@@ -15,7 +15,7 @@ export default function TestimonialsSection() {
           {testimonialsData.map((testimonial) => (
             <div
               key={testimonial.name}
-              className="rounded-2xl border bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl"
+              className="rounded-2xl border bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl blur-backdrop-filter hover:backdrop-blur-sm"
             >
               <p className="mb-6 text-gray-600">&quot;{testimonial.quote}&quot;</p>
               <div className="flex items-center">

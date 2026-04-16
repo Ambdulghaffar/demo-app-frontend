@@ -65,7 +65,7 @@ export function LoginForm() {
   return (
     <div className="space-y-6">
       <Button
-        className="w-full py-6 text-lg border-black hover:bg-gray-300 cursor-pointer"
+        className="w-full py-6 text-lg border-black bg-gray-500 hover:bg-gray-600 cursor-pointer"
       >
         <Image
           src="/images/google-icon.jpg"
