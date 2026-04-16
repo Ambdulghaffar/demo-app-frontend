@@ -79,8 +79,8 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold">Informations de contact</h3>
             <ul className="mt-4 space-y-2 text-sm">
-              <li className="text-gray-400">support@technova.com</li>
-              <li className="text-gray-400">Dhaka, Bangladesh</li>
+              <li className="text-gray-400">support@electrotech.com</li>
+              <li className="text-gray-400">Tétouan, Maroc</li>
             </ul>
           </div>
         </div>
