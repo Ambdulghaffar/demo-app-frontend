@@ -17,7 +17,9 @@ export const getAllUsers = async (): Promise<UserDto[]> => {
 
 export const getUserById = async (id: number): Promise<User> => {
   try {
-    const { data } = await apiClient.get<User>(USERS_ENDPOINTS.byId(id));
+    const { data } = await apiClient.get<User>(USERS_ENDPOINTS.byId(id), {
+      headers: await getAuthHeaders(),
+    });
     return data;
   } catch (error) {
     return handleApiError(error, `getUserById (id: ${id})`);
@@ -44,6 +46,9 @@ export const updateUser = async (userData: Partial<User>): Promise<User> => {
     const { data } = await apiClient.put<User>(
       USERS_ENDPOINTS.byId(userData.id!),
       userData,
+      {
+        headers: await getAuthHeaders(),
+      },
     );
     return data;
   } catch (error) {
