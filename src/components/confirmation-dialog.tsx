@@ -37,7 +37,7 @@ export default function ConfirmationDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="cursor-pointer">Annuler</AlertDialogCancel>
-          <AlertDialogAction className="cursor-pointer" onClick={onConfirm} disabled={disabled}>
+          <AlertDialogAction className="cursor-pointer bg-pink-600 hover:bg-pink-700" onClick={onConfirm} disabled={disabled}>
             Continuer
           </AlertDialogAction>
         </AlertDialogFooter>

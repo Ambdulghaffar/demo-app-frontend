@@ -12,12 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
-  BadgeCheck,
-  Bell,
-  CreditCard,
-  LayoutDashboard,
   LogOut,
-  User,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
