@@ -7,7 +7,6 @@ import {
   Frame,
   Map,
   PieChart,
-  School2,
   ShoppingBag,
 } from "lucide-react";
 

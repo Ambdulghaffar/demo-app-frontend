@@ -59,8 +59,8 @@ export default function Header() {
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <CircleUser className="h-8 w-8" />
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <CircleUser size={20} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>

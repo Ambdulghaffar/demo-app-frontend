@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import { useState } from "react"; // Importer useState
+import { Eye, EyeOff } from "lucide-react"; // Importer les icônes
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +34,8 @@ const FormSchema = z.object({
 
 export function LoginForm() {
   const route = useRouter();
+  // 1. Ajouter l'état pour la visibilité du mot de passe
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -65,7 +69,8 @@ export function LoginForm() {
   return (
     <div className="space-y-6">
       <Button
-        className="w-full py-6 text-lg border-black bg-gray-500 hover:bg-gray-600 cursor-pointer"
+        variant="outline"
+        className="w-full py-6 text-lg border-gray-300 hover:bg-gray-100"
       >
         <Image
           src="/images/google-icon.jpg"
@@ -82,7 +87,7 @@ export function LoginForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-muted-foreground">
+          <span className="bg-background px-2 text-muted-foreground">
             Ou continuer avec
           </span>
         </div>
@@ -121,21 +126,36 @@ export function LoginForm() {
                     Mot de passe oublié?
                   </Link>
                 </div>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    {...field}
-                    className="py-6 text-black"
-                  />
-                </FormControl>
+                {/* 2. Envelopper l'Input et l'icône dans un conteneur relatif */}
+                <div className="relative">
+                  <FormControl>
+                    <Input
+                      // 3. Changer le type en fonction de l'état
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      {...field}
+                      className="py-6 pr-10" // Ajouter un padding à droite pour l'icône
+                    />
+                  </FormControl>
+                  {/* 4. Ajouter l'icône et le gestionnaire de clic */}
+                  <div
+                    className="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-3"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-500" />
+                    )}
+                  </div>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button
             type="submit"
-            className="w-full py-6 text-lg bg-pink-400 hover:bg-pink-500 cursor-pointer"
+            className="w-full py-6 text-lg bg-pink-500 hover:bg-pink-600 text-white cursor-pointer"
           >
             Se connecter
           </Button>
