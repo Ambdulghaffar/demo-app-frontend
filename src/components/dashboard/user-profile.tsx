@@ -9,7 +9,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Avatar, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
 import {
   BadgeCheck,
   Bell,
@@ -19,84 +20,71 @@ import {
   User,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import { ROUTES } from "@/constants/route";
 import Link from "next/link";
 
 interface UserProfileProps {
   showDashboardLink?: boolean;
 }
 
-export default function UserProfile({ showDashboardLink = true }: UserProfileProps) {
+export default function UserProfile({
+  showDashboardLink = true,
+}: UserProfileProps) {
   const { data: session } = useSession();
-  const handleLogout = async () => {
-    await signOut({
-      callbackUrl: "/login",
-      redirect: true,
-    });
-  };
+
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Avatar className="h-8 w-8 rounded-lg">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
             <AvatarImage
-              src="Images/users/daniel.jpg"
-              alt={session?.user?.name}
+              src={session?.user?.image ?? ""}
+              alt={session?.user?.name ?? ""}
             />
+            <AvatarFallback>
+              {session?.user?.name
+                ? session.user.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                : "N"}
+            </AvatarFallback>
           </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg">
-          <DropdownMenuLabel className="p-0 font-normal">
-            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src="Images/users/daniel.jpg"
-                  alt={session?.user?.name}
-                />
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
-                  {session?.user?.name}
-                </span>
-                <span className="truncate text-xs">{session?.user?.email}</span>
-              </div>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            {showDashboardLink && (
-              <DropdownMenuItem>
-                <LayoutDashboard />
-                <Link href={ROUTES.DASHBOARD}>Tableau de bord</Link>
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem>
-              <User />
-              Profil
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <BadgeCheck />
-              Mon compte
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <CreditCard />
-              Facturation
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Bell />
-              Notifications
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-            <LogOut />
-            Déconnexion
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">
+              {session?.user?.name}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {session?.user?.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          {showDashboardLink && (
+            <Link href="/dashboard">
+              <DropdownMenuItem>Tableau de bord</DropdownMenuItem>
+            </Link>
+          )}
+          <Link href="/dashboard/profile">
+            <DropdownMenuItem>Profil</DropdownMenuItem>
+          </Link>
+          <Link href="/dashboard/billing">
+            <DropdownMenuItem>Facturation</DropdownMenuItem>
+          </Link>
+          <Link href="/dashboard/settings">
+            <DropdownMenuItem>Paramètres</DropdownMenuItem>
+          </Link>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => signOut()}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Déconnexion</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
