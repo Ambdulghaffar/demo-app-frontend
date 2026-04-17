@@ -2,11 +2,6 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  Command,
-  Frame,
-  Map,
-  PieChart,
   ShoppingBag,
 } from "lucide-react";
 
@@ -35,36 +30,9 @@ const data = {
       name: "ElectroTech",
       logo: ShoppingBag,
       plan: "Boutique en ligne",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Gratuit",
-    },
+    }
   ],
   navMain: NavMainAdmin,
-  projects: [
-    {
-      name: "Ingénierie de conception",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Ventes et marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Voyage",
-      url: "#",
-      icon: Map,
-    },
-  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -77,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

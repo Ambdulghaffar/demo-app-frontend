@@ -1,24 +1,11 @@
 "use client";
-import {
-  CircleUser,
-  Menu,
-  Search,
-  ShoppingCart,
-  X,
-} from "lucide-react";
+import { Menu, Search, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 import { ROUTES } from "@/constants/route";
+import UserProfile from "./dashboard/user-profile";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,37 +44,14 @@ export default function Header() {
           <ShoppingCart className="h-5 w-5 text-gray-600 cursor-pointer" />
 
           {session ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                  <CircleUser size={20} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {session.user?.name}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {session.user?.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href={ROUTES.DASHBOARD}>Tableau de bord</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>Profil</DropdownMenuItem>
-                <DropdownMenuItem>Facturation</DropdownMenuItem>
-                <DropdownMenuItem>Paramètres</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Se déconnecter</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserProfile />
           ) : (
             <div className="hidden items-center space-x-2 md:flex">
-              <Button asChild variant="ghost" className="text-black border rounded-xl border-gray-300">
+              <Button
+                asChild
+                variant="ghost"
+                className="text-black border rounded-xl border-gray-300"
+              >
                 <Link href={ROUTES.LOGIN}>Se connecter</Link>
               </Button>
               <Button asChild className="border rounded-xl ">
