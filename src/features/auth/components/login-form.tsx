@@ -69,8 +69,7 @@ export function LoginForm() {
   return (
     <div className="space-y-6">
       <Button
-        variant="outline"
-        className="w-full py-6 text-lg border-gray-300 hover:bg-gray-100"
+        className="w-full py-6 text-lg font-bold border-gray-600 bg-gray-400 hover:bg-gray-500"
       >
         <Image
           src="/images/google-icon.jpg"
@@ -155,7 +154,7 @@ export function LoginForm() {
           />
           <Button
             type="submit"
-            className="w-full py-6 text-lg bg-pink-500 hover:bg-pink-600 text-white cursor-pointer"
+            className="w-full py-6 text-lg bg-pink-500 hover:bg-pink-600 text-white"
           >
             Se connecter
           </Button>

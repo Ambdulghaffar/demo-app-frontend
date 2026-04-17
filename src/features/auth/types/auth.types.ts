@@ -3,6 +3,7 @@ export interface AuthResponse {
   refreshToken: string;
   expiresIn: number;
   email: string;
+  username: string;
   role: string; // ou UserRole si tu as un enum
 }
 
