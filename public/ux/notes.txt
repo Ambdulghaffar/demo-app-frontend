@@ -1,0 +1,8 @@
+Dashboard (Tableau de bord)
+"inventory management dashboard"
+"stock tracking dashboard electronics"
+"product management UI design"
+"e-commerce admin dashboard"
+"analytics dashboard tech"
+"warehouse management interface"
+"data visualization stock app"

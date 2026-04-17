@@ -3,7 +3,6 @@ import { AuthResponse } from "@/features/auth/types/auth.types";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
   session: {
@@ -51,6 +50,7 @@ export const authOptions: NextAuthOptions = {
           !data.accessToken ||
           !data.refreshToken ||
           !data.email ||
+          !data.username ||
           !data.role ||
           !data.expiresIn
         ) {
@@ -60,18 +60,22 @@ export const authOptions: NextAuthOptions = {
         return {
           id: data.email,
           email: data.email,
-          name: data.email,
+          name: data.username,
           roles: [data.role],
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
           expiresIn: data.expiresIn,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any; // On utilise "any" ici pour éviter les erreurs de type liées à la nature dynamique du token, mais on s'assure que les propriétés nécessaires sont présentes.
+        } as any;
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
+      console.log("--- Callback JWT ---");
+      console.log("User object:", user);
+      console.log("Initial token:", token);
+
       // ÉTAPE A : Login Initial
       if (user) {
         token.sub = user.id;
@@ -84,6 +88,7 @@ export const authOptions: NextAuthOptions = {
         // Calcul du timestamp d'expiration : MAINTENANT + Durée du backend
         token.expiresAt = Date.now() + user.expiresIn * 1000;
       }
+
       // ÉTAPE B : Vérification si encore valide (avec marge de 30s)
       if (Date.now() < (token.expiresAt as number) - 3000) {
         return token;
@@ -105,40 +110,37 @@ export const authOptions: NextAuthOptions = {
             }),
           });
 
-          if (response.ok) {
-            const data =
-              (await response.json()) as Partial<AuthResponse>;
-            return {
-              ...token,
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
-              expiresAt: Date.now() + (data.expiresIn ?? 0) * 1000,
-              error: undefined, // On reset l'erreur si le refresh réussit
-            };
-          } else {
-            // Si le refresh échoue (ex: refresh token expiré), on ajoute une erreur au token pour gérer la déconnexion côté client
-            return { ...token, error: "RefreshAccessTokenError" };
+          const refreshedTokens = await response.json();
+
+          if (!response.ok) {
+            throw refreshedTokens;
           }
+
+          return {
+            ...token,
+            accessToken: refreshedTokens.accessToken,
+            refreshToken: refreshedTokens.refreshToken,
+            expiresAt: Date.now() + refreshedTokens.expiresIn * 1000,
+          };
         } catch (error) {
-          console.error("Error refreshing token:", error);
-          // En cas d'erreur (ex: réseau), on considère que le refresh a échoué
-          return { ...token, error: "RefreshAccessTokenError" };
+          console.error("Error refreshing access token", error);
+          // Le refresh a échoué, on invalide la session
+          return { ...token, error: "RefreshAccessTokenError" as const };
         }
       }
 
       return token;
     },
+
     async session({ session, token }) {
-      session.user = {
-        ...session.user,
-        id: String(token.sub ?? ""),
-        email: String(token.email ?? ""),
-        name: String(token.name ?? ""),
-        roles: Array.isArray(token.roles) ? token.roles : [],
-      };
-      session.accessToken = token.accessToken;
-	  // EXPOSITION de l'erreur pour le SessionGuard
-	  session.error = token.error as "RefreshAccessTokenError" | undefined;
+      if (token) {
+        session.user.id = token.sub as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.roles = token.roles as string[];
+        session.accessToken = token.accessToken as string;
+        session.error = token.error as string | undefined;
+      }
       return session;
     },
   },

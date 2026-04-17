@@ -9,8 +9,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
-import ModeToggle from "../mode-toggle";
 import { ROUTES } from "@/constants/route";
+import UserProfile from "./user-profile";
+import { Input } from "../ui/input";
+import { Search } from "lucide-react";
 
 type breadcrumbProps = {
   label?: string;
@@ -40,8 +42,15 @@ export default function SidebarBreadcrumb({label}:breadcrumbProps) {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="pe-4">
-          <ModeToggle/>
+        <div className="flex items-center gap-2 px-4">
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher..."
+              className="pl-8 w-[200px]"
+            />
+          </div>
+          <UserProfile showDashboardLink={false} />
         </div>
       </header>
     </div>

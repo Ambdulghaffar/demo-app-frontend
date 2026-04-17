@@ -1,10 +1,12 @@
 import {
   LayoutDashboard,
   Users,
-  School,
-  FileSpreadsheet,
-  ClipboardList,
-  Settings2,
+  Box,
+  ShoppingCart,
+  Settings,
+  FileText,
+  Truck,
+  Tags,
 } from "lucide-react";
 import { ROUTES } from "./route";
 
@@ -12,13 +14,76 @@ export const NavMainAdmin = [
   {
     title: "Tableau de bord",
     icon: LayoutDashboard,
-    url: ROUTES.DASHBOARD
+    url: ROUTES.DASHBOARD,
+  },
+  {
+    title: "Catalogue",
+    icon: Box,
+    url: "#",
+    items: [
+      {
+        title: "Produits",
+        url: "#",
+      },
+      {
+        title: "Catégories",
+        url: "#",
+      },
+    ],
+  },
+  {
+    title: "Ventes",
+    icon: ShoppingCart,
+    url: "#",
+    items: [
+      {
+        title: "Commandes",
+        url: "#",
+      },
+      {
+        title: "Factures",
+        url: "#",
+      },
+      {
+        title: "Remboursements",
+        url: "#",
+      },
+    ],
+  },
+  {
+    title: "Stocks",
+    icon: FileText,
+    url: "#",
+    items: [
+      {
+        title: "État des stocks",
+        url: "#",
+      },
+      {
+        title: "Mouvements",
+        url: "#",
+      },
+    ],
+  },
+  {
+    title: "Fournisseurs",
+    icon: Truck,
+    url: "#",
+    items: [
+      {
+        title: "Liste des fournisseurs",
+        url: "#",
+      },
+      {
+        title: "Commandes fournisseurs",
+        url: "#",
+      },
+    ],
   },
   {
     title: "Utilisateurs",
-    url: "#",
     icon: Users,
-    isActive: true,
+    url: "#",
     items: [
       {
         title: "Liste des utilisateurs",
@@ -32,84 +97,34 @@ export const NavMainAdmin = [
         title: "Rôles & permissions",
         url: "#",
       },
-      {
-        title: "Historique des connexions",
-        url: "#",
-      },
     ],
   },
   {
-    title: "Classes",
+    title: "Marketing",
+    icon: Tags,
     url: "#",
-    icon: School,
     items: [
       {
-        title: "Liste des classes",
+        title: "Promotions",
         url: "#",
       },
       {
-        title: "Créer une classe",
-        url: "#",
-      },
-      {
-        title: "Affecter les élèves",
-        url: "#",
-      },
-      {
-        title: "Emploi du temps",
-        url: "#",
-      },
-    ],
-  },
-  {
-    title: "Matières",
-    url: "#",
-    icon: FileSpreadsheet,
-    items: [
-      {
-        title: "Liste des matières",
-        url: "#",
-      },
-      {
-        title: "Ajouter une matière",
-        url: "#",
-      },
-      {
-        title: "Affecter aux professeurs",
-        url: "#",
-      },
-    ],
-  },
-  {
-    title: "Notes",
-    url: "#",
-    icon: ClipboardList,
-    items: [
-      {
-        title: "Toutes les notes",
-        url: "#",
-      },
-      {
-        title: "Ajouter des notes",
-        url: "#",
-      },
-      {
-        title: "Statistiques / Moyennes",
+        title: "Codes de réduction",
         url: "#",
       },
     ],
   },
   {
     title: "Paramètres",
+    icon: Settings,
     url: "#",
-    icon: Settings2,
     items: [
       {
-        title: "Informations de l’école",
+        title: "Informations de l'entreprise",
         url: "#",
       },
       {
-        title: "Équipe administrative",
+        title: "Intégrations",
         url: "#",
       },
       {
