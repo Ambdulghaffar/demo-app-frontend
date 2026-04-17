@@ -15,6 +15,8 @@ import { ROUTES } from "@/constants/route";
 import { ApiError } from "@/types/api.types";
 import { deleteUserAction } from "@/features/users/actions/user.actions";
 import type { UserDto } from "@/features/users/types/user.types";
+import { truncateText } from "@/utils/truncate-text";
+import { formatDate } from "@/utils/format-date";
 
 interface ListUsersProps {
   initialData: UserDto[];
@@ -99,9 +101,9 @@ export default function ListUsers({ initialData }: ListUsersProps) {
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.phone}</TableCell>
-                <TableCell>{user.address}</TableCell>
+                <TableCell title={user.address}>{truncateText(user.address)}</TableCell>
                 <TableCell>{user.role}</TableCell>
-                <TableCell>{user.createdAt}</TableCell>
+                <TableCell>{formatDate(user.createdAt)}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Link href={`${ROUTES.DASHBOARD_UPDATE_USERS}/${user.id}`}>
