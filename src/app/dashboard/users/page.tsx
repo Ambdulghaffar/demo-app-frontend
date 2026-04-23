@@ -10,11 +10,12 @@ interface UsersPageProps {
     size?: string;
     sortBy?: string;
     sortDir?: string;
+    role?: string;
   }>;
 }
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
-  const { page, size, sortBy, sortDir } = await searchParams;
+  const { page, size, sortBy, sortDir, role } = await searchParams;
 
   const session = await getServerSession(authOptions);
 
@@ -23,6 +24,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
     Number(size) || 10,
     sortBy || "id",
     sortDir || "desc",
+    role
   );
 
   // Filtrer l'utilisateur connecté côté serveur
@@ -36,6 +38,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
       <ListUsers
         initialData={{ ...data, content: filteredContent }}
         currentPage={Number(page) || 0}
+        currentRole={role || "all"}
       />
     </>
   );

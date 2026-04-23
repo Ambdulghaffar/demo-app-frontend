@@ -11,13 +11,20 @@ export const getAllUsers = async (
   size = 10,
   sortBy = "id",
   sortDir = "desc",
+  role?: string, // optionnel
 ): Promise<PageResponse<UserDto>> => {
   try {
     const { data } = await apiClient.get<PageResponse<UserDto>>(
       USERS_ENDPOINTS.dto,
       {
         headers: await getAuthHeaders(),
-        params: { page, size, sortBy, sortDir },
+        params: {
+          page,
+          size,
+          sortBy,
+          sortDir,
+          ...(role && role !== "all" && { role }),
+        },
       },
     );
     return data;
