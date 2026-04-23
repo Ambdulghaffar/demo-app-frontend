@@ -3,21 +3,40 @@ import ListUsers from "@/features/users/components/list-users";
 import { getAllUsers } from "@/features/users/services/user.services";
 import { authOptions } from "@/lib/auth/auth";
 import { getServerSession } from "next-auth";
-import React from "react";
 
-export default async function page() {
+interface UsersPageProps {
+  searchParams: Promise<{
+    page?: string;
+    size?: string;
+    sortBy?: string;
+    sortDir?: string;
+  }>;
+}
+
+export default async function UsersPage({ searchParams }: UsersPageProps) {
+  const { page, size, sortBy, sortDir } = await searchParams;
+
   const session = await getServerSession(authOptions);
-  const users = await getAllUsers();
 
-  // Filtrer l'utilisateur connecté de la liste côté serveur
-  const filteredUsers = users.filter(
+  const data = await getAllUsers(
+    Number(page) || 0,
+    Number(size) || 10,
+    sortBy || "id",
+    sortDir || "desc",
+  );
+
+  // Filtrer l'utilisateur connecté côté serveur
+  const filteredContent = data.content.filter(
     (user) => user.email !== session?.user?.email,
   );
-  
+
   return (
     <>
-      <SidebarBreadcrumb label={"Liste des utilisateurs"} />
-      <ListUsers initialData={filteredUsers} />
+      <SidebarBreadcrumb label="Liste des utilisateurs" />
+      <ListUsers
+        initialData={{ ...data, content: filteredContent }}
+        currentPage={Number(page) || 0}
+      />
     </>
   );
 }

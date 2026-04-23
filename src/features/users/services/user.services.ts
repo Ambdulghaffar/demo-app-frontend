@@ -4,12 +4,22 @@ import { handleApiError } from "@/lib/axios/handle-api-error";
 import { USERS_ENDPOINTS } from "../constants/users.endpoints";
 import { getAuthHeaders } from "@/lib/auth/auth-helpers";
 import axios from "axios";
+import { PageResponse } from "@/types/pagination.types";
 
-export const getAllUsers = async (): Promise<UserDto[]> => {
+export const getAllUsers = async (
+  page = 0,
+  size = 10,
+  sortBy = "id",
+  sortDir = "desc",
+): Promise<PageResponse<UserDto>> => {
   try {
-    const { data } = await apiClient.get<UserDto[]>(USERS_ENDPOINTS.dto, {
-      headers: await getAuthHeaders(),
-    });
+    const { data } = await apiClient.get<PageResponse<UserDto>>(
+      USERS_ENDPOINTS.dto,
+      {
+        headers: await getAuthHeaders(),
+        params: { page, size, sortBy, sortDir },
+      },
+    );
     return data;
   } catch (error) {
     return handleApiError(error, "getAllUsers");
@@ -23,7 +33,7 @@ export const getUserById = async (id: number): Promise<User | null> => {
     });
     return data;
   } catch (error) {
-        // 404 Spring Boot → null → notFound() dans page.tsx
+    // 404 Spring Boot → null → notFound() dans page.tsx
     if (axios.isAxiosError(error) && error.response?.status === 404) {
       return null;
     }

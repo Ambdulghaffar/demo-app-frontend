@@ -2,33 +2,31 @@
 
 import React, { useState, useTransition } from "react";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { PlusCircle, Search, ListFilter, Pen } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  Card, CardContent, CardDescription, CardHeader, CardTitle,
 } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { UserDto } from "@/features/users/types/user.types";
+import { PageResponse } from "@/types/pagination.types";
 import { ROUTES } from "@/constants/route";
 import { formatDate } from "@/utils/format-date";
 import { truncateText } from "@/utils/truncate-text";
@@ -36,47 +34,83 @@ import ConfirmationDialog from "@/components/confirmation-dialog";
 import { deleteUserAction } from "../actions/user.actions";
 import { toast } from "react-toastify";
 import { ApiError } from "@/types/api.types";
-import { Badge } from "@/components/ui/badge";
 
 interface ListUsersProps {
-  initialData: UserDto[];
+  initialData: PageResponse<UserDto>;
+  currentPage: number;
 }
 
-export default function ListUsers({ initialData }: ListUsersProps) {
-  const [data, setData] = useState<UserDto[]>(initialData);
+export default function ListUsers({ initialData, currentPage }: ListUsersProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [data, setData] = useState<PageResponse<UserDto>>(initialData);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const getBadgeClasses = (role: string) => {
     switch (role.toUpperCase()) {
-      case "ADMIN":
-        return "bg-pink-50 text-pink-700 dark:bg-pink-950 dark:text-pink-300";
-      case "MANAGER":
-        return "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300";
-      case "CLIENT":
-      default:
-        return "bg-gray-200 text-gray-700 dark:bg-gray-950 dark:text-gray-300";
+      case "ADMIN":   return "bg-pink-50 text-pink-700 dark:bg-pink-950 dark:text-pink-300";
+      case "MANAGER": return "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300";
+      default:        return "bg-gray-200 text-gray-700 dark:bg-gray-950 dark:text-gray-300";
     }
+  };
+
+  // Construit l'URL pour une page donnée
+  const buildPageUrl = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(page));
+    return `${pathname}?${params.toString()}`;
+  };
+
+  // Génère les numéros de pages à afficher avec ellipsis
+  const getPageNumbers = () => {
+    const total = data.totalPages;
+    const current = currentPage;
+    const pages: (number | "ellipsis")[] = [];
+
+    if (total <= 5) {
+      // Moins de 5 pages → on affiche tout
+      return Array.from({ length: total }, (_, i) => i);
+    }
+
+    // Toujours afficher la première page
+    pages.push(0);
+
+    if (current > 2) pages.push("ellipsis");
+
+    // Pages autour de la page courante
+    const start = Math.max(1, current - 1);
+    const end = Math.min(total - 2, current + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+
+    if (current < total - 3) pages.push("ellipsis");
+
+    // Toujours afficher la dernière page
+    pages.push(total - 1);
+
+    return pages;
   };
 
   const handleDeleteUser = (userId: number) => {
     setDeletingId(userId);
     startTransition(async () => {
-      // ✅ startTransition établit le bon contexte pour les Server Actions
       try {
         const result = await deleteUserAction(userId);
         if (result.success) {
           toast.success("Utilisateur supprimé avec succès !");
-          setData((prev) => prev.filter((u) => u.id !== userId));
+          setData((prev) => ({
+            ...prev,
+            content: prev.content.filter((u) => u.id !== userId),
+            totalElements: prev.totalElements - 1,
+          }));
         } else {
           toast.error(result.error || "Erreur lors de la suppression");
         }
       } catch (error) {
-        const message =
-          error instanceof ApiError
-            ? error.message
-            : "Erreur lors de la suppression";
-        toast.error(message);
+        toast.error(
+          error instanceof ApiError ? error.message : "Erreur lors de la suppression"
+        );
       } finally {
         setDeletingId(null);
       }
@@ -87,20 +121,15 @@ export default function ListUsers({ initialData }: ListUsersProps) {
     <Card>
       <CardHeader>
         <CardTitle>Utilisateurs</CardTitle>
-        <CardDescription>
-          Gérez les utilisateurs et leurs accès.
-        </CardDescription>
+        <CardDescription>Gérez les utilisateurs et leurs accès.</CardDescription>
       </CardHeader>
       <CardContent>
+        {/* Filtres + bouton ajout */}
         <div className="flex items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-2">
             <div className="relative w-full max-w-sm">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Rechercher..."
-                className="pl-8 w-full"
-              />
+              <Input type="search" placeholder="Rechercher..." className="pl-8 w-full" />
             </div>
             <Select>
               <SelectTrigger className="w-[180px]">
@@ -115,11 +144,7 @@ export default function ListUsers({ initialData }: ListUsersProps) {
               </SelectContent>
             </Select>
           </div>
-          <Button
-            asChild
-            size="sm"
-            className="gap-1 bg-pink-600 hover:bg-pink-700"
-          >
+          <Button asChild size="sm" className="gap-1 bg-pink-600 hover:bg-pink-700">
             <Link href={ROUTES.DASHBOARD_CREATE_USERS}>
               <PlusCircle className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -128,6 +153,8 @@ export default function ListUsers({ initialData }: ListUsersProps) {
             </Link>
           </Button>
         </div>
+
+        {/* Table */}
         <Table>
           <TableHeader>
             <TableRow>
@@ -135,39 +162,29 @@ export default function ListUsers({ initialData }: ListUsersProps) {
               <TableHead>Téléphone</TableHead>
               <TableHead>Adresse</TableHead>
               <TableHead>Rôle</TableHead>
-              <TableHead className="hidden md:table-cell">
-                Date de création
-              </TableHead>
+              <TableHead className="hidden md:table-cell">Date de création</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.length > 0 ? (
-              data.map((user) => (
+            {data.content.length > 0 ? (
+              data.content.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell className="font-medium">
                     {user.username}
-                    <p className="text-xs text-muted-foreground">
-                      {user.email}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
                   </TableCell>
                   <TableCell>{user.phone}</TableCell>
-                  <TableCell title={user.address}>
-                    {truncateText(user.address)}
-                  </TableCell>
+                  <TableCell title={user.address}>{truncateText(user.address)}</TableCell>
                   <TableCell>
-                    <Badge className={getBadgeClasses(user.role)}>
-                      {user.role}
-                    </Badge>
+                    <Badge className={getBadgeClasses(user.role)}>{user.role}</Badge>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     {formatDate(user.createdAt)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Link
-                        href={`${ROUTES.DASHBOARD_UPDATE_USERS}/${user.id}`}
-                      >
+                      <Link href={`${ROUTES.DASHBOARD_UPDATE_USERS}/${user.id}`}>
                         <Pen color="blue" size={16} />
                       </Link>
                       <ConfirmationDialog
@@ -180,16 +197,61 @@ export default function ListUsers({ initialData }: ListUsersProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="h-24 text-center text-muted-foreground"
-                >
+                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                   Aucun utilisateur trouvé.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+
+        {/* Pagination */}
+        {data.totalPages > 1 && (
+          <div className="flex items-center justify-between mt-6">
+            <p className="text-sm text-muted-foreground">
+              {data.totalElements} utilisateur{data.totalElements > 1 ? "s" : ""} au total
+            </p>
+            <Pagination>
+              <PaginationContent>
+                {/* Précédent */}
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={data.first ? "#" : buildPageUrl(currentPage - 1)}
+                    aria-disabled={data.first}
+                    className={data.first ? "pointer-events-none opacity-50" : ""}
+                  />
+                </PaginationItem>
+
+                {/* Numéros de pages */}
+                {getPageNumbers().map((item, index) =>
+                  item === "ellipsis" ? (
+                    <PaginationItem key={`ellipsis-${index}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={item}>
+                      <PaginationLink
+                        href={buildPageUrl(item)}
+                        isActive={item === currentPage}
+                      >
+                        {item + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
+
+                {/* Suivant */}
+                <PaginationItem>
+                  <PaginationNext
+                    href={data.last ? "#" : buildPageUrl(currentPage + 1)}
+                    aria-disabled={data.last}
+                    className={data.last ? "pointer-events-none opacity-50" : ""}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
