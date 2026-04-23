@@ -1,4 +1,4 @@
-import { User, UserDto } from "../types/user.types";
+import { User, UserDto, UserStats } from "../types/user.types";
 import apiClient from "@/lib/axios/api-client";
 import { handleApiError } from "@/lib/axios/handle-api-error";
 import { USERS_ENDPOINTS } from "../constants/users.endpoints";
@@ -87,5 +87,17 @@ export const deleteUser = async (id: number): Promise<void> => {
   } catch (error) {
     console.error(`Error deleting user with id ${id}:`, error);
     return handleApiError(error, `deleteUser (id: ${id})`);
+  }
+};
+
+export const getUserStats = async (): Promise<UserStats> => {
+  try {
+    const { data } = await apiClient.get<UserStats>(
+      USERS_ENDPOINTS.stats,  // "/api/users/stats"
+      { headers: await getAuthHeaders() }
+    );
+    return data;
+  } catch (error) {
+    return handleApiError(error, "getUserStats");
   }
 };

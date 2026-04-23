@@ -1,7 +1,9 @@
 import SidebarBreadcrumb from "@/components/dashboard/sidebar-breadcrumb";
+import { StatCard } from "@/components/dashboard/stat-card";
 import ListUsers from "@/features/users/components/list-users";
-import { getAllUsers } from "@/features/users/services/user.services";
+import { getAllUsers, getUserStats } from "@/features/users/services/user.services";
 import { authOptions } from "@/lib/auth/auth";
+import { UserCheck, Shield, Crown, UsersRound } from "lucide-react";
 import { getServerSession } from "next-auth";
 
 interface UsersPageProps {
@@ -16,30 +18,72 @@ interface UsersPageProps {
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
   const { page, size, sortBy, sortDir, role } = await searchParams;
-
   const session = await getServerSession(authOptions);
 
-  const data = await getAllUsers(
-    Number(page) || 0,
-    Number(size) || 10,
-    sortBy || "id",
-    sortDir || "desc",
-    role
-  );
+  const [data, stats] = await Promise.all([
+    getAllUsers(Number(page) || 0, Number(size) || 10, sortBy || "id", sortDir || "desc", role),
+    getUserStats(),
+  ]);
 
-  // Filtrer l'utilisateur connecté côté serveur
   const filteredContent = data.content.filter(
     (user) => user.email !== session?.user?.email,
   );
 
   return (
-    <>
-      <SidebarBreadcrumb label="Liste des utilisateurs" />
+    <div className="space-y-8">
+      <SidebarBreadcrumb label="Gestion des utilisateurs" />
+
+      {/* Section d'introduction avec statistiques */}
+      <div className="bg-gradient-to-r from-pink-50 to-white rounded-2xl p-6 border border-pink-100">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg flex items-center justify-center">
+            <UsersRound className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Gestion des utilisateurs</h1>
+            <p className="text-gray-600">Administration et supervision des comptes utilisateur</p>
+          </div>
+        </div>
+
+        {/* Statistiques */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Clients"
+            value={stats.clients}
+            icon={UserCheck}
+            iconBgColor="bg-emerald-100 text-emerald-600"
+            description="Utilisateurs finaux"
+          />
+          <StatCard
+            title="Managers"
+            value={stats.managers}
+            icon={Shield}
+            iconBgColor="bg-blue-100 text-blue-600"
+            description="Gestionnaires intermédiaires"
+          />
+          <StatCard
+            title="Administrateurs"
+            value={stats.admins}
+            icon={Crown}
+            iconBgColor="bg-amber-100 text-amber-600"
+            description="Super administrateurs"
+          />
+          <StatCard
+            title="Total utilisateurs"
+            value={stats.total}
+            icon={UsersRound}
+            iconBgColor="bg-pink-100 text-pink-600"
+            description="Tous les comptes actifs"
+          />
+        </div>
+      </div>
+
+      {/* Liste des utilisateurs */}
       <ListUsers
         initialData={{ ...data, content: filteredContent }}
         currentPage={Number(page) || 0}
         currentRole={role || "all"}
       />
-    </>
+    </div>
   );
 }
