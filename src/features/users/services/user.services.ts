@@ -3,6 +3,7 @@ import apiClient from "@/lib/axios/api-client";
 import { handleApiError } from "@/lib/axios/handle-api-error";
 import { USERS_ENDPOINTS } from "../constants/users.endpoints";
 import { getAuthHeaders } from "@/lib/auth/auth-helpers";
+import axios from "axios";
 
 export const getAllUsers = async (): Promise<UserDto[]> => {
   try {
@@ -15,13 +16,18 @@ export const getAllUsers = async (): Promise<UserDto[]> => {
   }
 };
 
-export const getUserById = async (id: number): Promise<User> => {
+export const getUserById = async (id: number): Promise<User | null> => {
   try {
     const { data } = await apiClient.get<User>(USERS_ENDPOINTS.byId(id), {
       headers: await getAuthHeaders(),
     });
     return data;
   } catch (error) {
+        // 404 Spring Boot → null → notFound() dans page.tsx
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    // Tout le reste (500, réseau, 403...) → throw ApiError → error.tsx
     return handleApiError(error, `getUserById (id: ${id})`);
   }
 };

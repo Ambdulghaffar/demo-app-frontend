@@ -1,24 +1,25 @@
 import SidebarBreadcrumb from "@/components/dashboard/sidebar-breadcrumb";
 import EditUser from "@/features/users/components/edit-user";
 import { getUserById } from "@/features/users/services/user.services";
+import { notFound } from "next/navigation";
 import React from "react";
-import NotFound from "./not-found";
 
-export default async function page({
+export default async function EditUserPage({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getUserById(id);
+
+  const user = await getUserById(Number(id));
+
   if (!user) {
-    return <NotFound/>
+    notFound();
   }
-  await new Promise((resolve) => setTimeout(resolve, 5000));
   return (
     <>
       <SidebarBreadcrumb label="Editer" />
-      <EditUser editUser={{ ...user, password: "" }} />
+      <EditUser editUser={{ ...user }} />
     </>
   );
 }

@@ -72,9 +72,6 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      console.log("--- Callback JWT ---");
-      console.log("User object:", user);
-      console.log("Initial token:", token);
 
       // ÉTAPE A : Login Initial
       if (user) {

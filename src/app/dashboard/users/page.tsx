@@ -13,9 +13,7 @@ export default async function page() {
   const filteredUsers = users.filter(
     (user) => user.email !== session?.user?.email,
   );
-
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-
+  
   return (
     <>
       <SidebarBreadcrumb label={"Liste des utilisateurs"} />
