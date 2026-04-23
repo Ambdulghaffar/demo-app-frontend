@@ -14,6 +14,7 @@ export default async function page({
   if (!user) {
     return <NotFound/>
   }
+  await new Promise((resolve) => setTimeout(resolve, 5000));
   return (
     <>
       <SidebarBreadcrumb label="Editer" />

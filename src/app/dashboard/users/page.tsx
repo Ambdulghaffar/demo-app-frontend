@@ -14,6 +14,8 @@ export default async function page() {
     (user) => user.email !== session?.user?.email,
   );
 
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   return (
     <>
       <SidebarBreadcrumb label={"Liste des utilisateurs"} />

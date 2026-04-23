@@ -26,7 +26,6 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/route";
 import { User } from "@/features/users/types/user.types";
-import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -58,7 +57,6 @@ interface EditUserProps {
 
 export default function EditUser({ editUser }: EditUserProps) {
   const router = useRouter();
-  const [loading, setLoading] = React.useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,7 +70,6 @@ export default function EditUser({ editUser }: EditUserProps) {
 
   // Soumission du formulaire
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
     try {
       const result = await updateUserAction({ id: editUser.id, ...values });
       if (result.success) {
@@ -87,136 +84,196 @@ export default function EditUser({ editUser }: EditUserProps) {
         error instanceof Error ? error.message : "Erreur inconnue";
       toast.error(`Erreur lors de la modification : ${message}`);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-6">Editer un utilisateur</h2>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 bg-muted/40 p-6 rounded-xl shadow-sm"
-        >
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nom complet</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Entrez le nom complet de l&lsquo;utilisateur.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="exemple@email.com"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Entrez une adresse email valide.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-white">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              Modifier l&apos;utilisateur
+            </h2>
+            <p className="text-gray-600">
+              Mettez à jour les informations de l&apos;utilisateur
+            </p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Téléphone</FormLabel>
-                  <FormControl>
-                    <Input type="tel" placeholder="+212600000000" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Entrez le numéro de téléphone de l’utilisateur.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Adresse</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Rue, ville, pays" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Entrez l’adresse de l’utilisateur.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
+          <div className="bg-white rounded-2xl shadow-xl border border-pink-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-pink-500 to-pink-600 p-6">
+              <h3 className="text-white text-xl font-semibold">
+                Informations utilisateur
+              </h3>
+              <p className="text-pink-100 text-sm">
+                Modifiez les champs nécessaires
+              </p>
+            </div>
+
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="p-8 space-y-6"
+              >
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-medium">
+                          Nom d&apos;utilisateur
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="ex: john_doe"
+                            {...field}
+                            className="py-3 bg-gray-50 border-gray-200 focus:ring-pink-500 focus:border-pink-500 transition-colors"
+                          />
+                        </FormControl>
+                        <FormDescription className="text-gray-500">
+                          Choisissez un nom d&apos;utilisateur unique.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-medium">
+                          Adresse email
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="exemple@email.com"
+                            {...field}
+                            className="py-3 bg-gray-50 border-gray-200 focus:ring-pink-500 focus:border-pink-500 transition-colors"
+                          />
+                        </FormControl>
+                        <FormDescription className="text-gray-500">
+                          Une adresse email valide est requise.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-medium">
+                          Numéro de téléphone
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            placeholder="+212600000000"
+                            {...field}
+                            className="py-3 bg-gray-50 border-gray-200 focus:ring-pink-500 focus:border-pink-500 transition-colors"
+                          />
+                        </FormControl>
+                        <FormDescription className="text-gray-500">
+                          Format international recommandé.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-medium">
+                          Adresse complète
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Rue, ville, pays"
+                            {...field}
+                            className="py-3 bg-gray-50 border-gray-200 focus:ring-pink-500 focus:border-pink-500 transition-colors"
+                          />
+                        </FormControl>
+                        <FormDescription className="text-gray-500">
+                          Adresse de livraison et facturation.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700 font-medium">
+                        Rôle utilisateur
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="py-3 bg-gray-50 border-gray-200 focus:ring-pink-500 focus:border-pink-500 transition-colors">
+                            <SelectValue placeholder="Sélectionnez un rôle" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-white border-gray-200">
+                          <SelectItem
+                            value="CLIENT"
+                            className="hover:bg-pink-50"
+                          >
+                            Client
+                          </SelectItem>
+                          <SelectItem
+                            value="MANAGER"
+                            className="hover:bg-pink-50"
+                          >
+                            Manager
+                          </SelectItem>
+                          <SelectItem
+                            value="ADMIN"
+                            className="hover:bg-pink-50"
+                          >
+                            Administrateur
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription className="text-gray-500">
+                        Détermine les permissions de l&apos;utilisateur.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
+                  <Button
+                    type="reset"
+                    variant="outline"
+                    onClick={() => form.reset()}
+                    className="px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    Réinitialiser
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="px-8 py-2 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-medium cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    <span>Mettre à jour</span>
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </div>
-          <FormField
-            control={form.control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Rôle</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionnez un rôle" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="CLIENT">Client</SelectItem>
-                    <SelectItem value="MANAGER">Manager</SelectItem>
-                    <SelectItem value="ADMIN">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  Choisissez le rôle de l&apos;utilisateur.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              type="reset"
-              variant="outline"
-              onClick={() => form.reset()}
-              className="cursor-pointer"
-            >
-              Réinitialiser
-            </Button>
-            <Button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-            >
-              <span>Modifer</span>
-              {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-            </Button>
-          </div>
-        </form>
-      </Form>
+        </div>
+      </div>
     </div>
   );
 }
