@@ -1,27 +1,52 @@
-import { User, UserDto } from "../types/user.types";
+import { User, UserDto, UserStats } from "../types/user.types";
 import apiClient from "@/lib/axios/api-client";
 import { handleApiError } from "@/lib/axios/handle-api-error";
 import { USERS_ENDPOINTS } from "../constants/users.endpoints";
 import { getAuthHeaders } from "@/lib/auth/auth-helpers";
+import axios from "axios";
+import { PageResponse } from "@/types/pagination.types";
 
-export const getAllUsers = async (): Promise<UserDto[]> => {
+export const getAllUsers = async (
+  page = 0,
+  size = 10,
+  sortBy = "id",
+  sortDir = "desc",
+  role?: string,
+  search?: string,        
+): Promise<PageResponse<UserDto>> => {
   try {
-    const { data } = await apiClient.get<UserDto[]>(USERS_ENDPOINTS.dto, {
-      headers: await getAuthHeaders(),
-    });
+    const { data } = await apiClient.get<PageResponse<UserDto>>(
+      USERS_ENDPOINTS.dto,
+      {
+        headers: await getAuthHeaders(),
+        params: {
+          page,
+          size,
+          sortBy,
+          sortDir,
+          ...(role   && role   !== "all" && { role }),
+          ...(search && search !== ""    && { search }), 
+        },
+      },
+    );
     return data;
   } catch (error) {
     return handleApiError(error, "getAllUsers");
   }
 };
 
-export const getUserById = async (id: number): Promise<User> => {
+export const getUserById = async (id: number): Promise<User | null> => {
   try {
     const { data } = await apiClient.get<User>(USERS_ENDPOINTS.byId(id), {
       headers: await getAuthHeaders(),
     });
     return data;
   } catch (error) {
+    // 404 Spring Boot → null → notFound() dans page.tsx
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    // Tout le reste (500, réseau, 403...) → throw ApiError → error.tsx
     return handleApiError(error, `getUserById (id: ${id})`);
   }
 };
@@ -64,5 +89,17 @@ export const deleteUser = async (id: number): Promise<void> => {
   } catch (error) {
     console.error(`Error deleting user with id ${id}:`, error);
     return handleApiError(error, `deleteUser (id: ${id})`);
+  }
+};
+
+export const getUserStats = async (): Promise<UserStats> => {
+  try {
+    const { data } = await apiClient.get<UserStats>(
+      USERS_ENDPOINTS.stats,  // "/api/users/stats"
+      { headers: await getAuthHeaders() }
+    );
+    return data;
+  } catch (error) {
+    return handleApiError(error, "getUserStats");
   }
 };

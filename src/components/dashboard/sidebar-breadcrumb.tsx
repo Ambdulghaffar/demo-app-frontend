@@ -1,58 +1,30 @@
-import React from "react";
+// components/dashboard/sidebar-breadcrumb.tsx
 import { SidebarTrigger } from "../ui/sidebar";
-import { Separator } from "@radix-ui/react-dropdown-menu";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "../ui/breadcrumb";
-import { ROUTES } from "@/constants/route";
+import { Separator } from "../ui/separator";
 import UserProfile from "./user-profile";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
+import DynamicBreadcrumb from "./dynamic-breadcrumb";
 
-type breadcrumbProps = {
-  label?: string;
+interface SidebarBreadcrumbProps {
+  values?: Record<string, string>;
 }
 
-export default function SidebarBreadcrumb({label}:breadcrumbProps) {
+export default function SidebarBreadcrumb({ values }: SidebarBreadcrumbProps) {
   return (
-    <div>
-      <header className="flex justify-between h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-        <div className="flex items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            /* orientation="vertical" */
-            className="mr-2 data-[orientation=vertical]:h-4"
-          />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href={ROUTES.DASHBOARD}>
-                 Tableau de bord
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{label}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+    <header className="flex justify-between h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+      <div className="flex items-center gap-2 px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <DynamicBreadcrumb values={values} />
+      </div>
+      <div className="flex items-center gap-2 px-4">
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Rechercher..." className="pl-8 w-[200px]" />
         </div>
-        <div className="flex items-center gap-2 px-4">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Rechercher..."
-              className="pl-8 w-[200px]"
-            />
-          </div>
-          <UserProfile showDashboardLink={false} />
-        </div>
-      </header>
-    </div>
+        <UserProfile showDashboardLink={false} />
+      </div>
+    </header>
   );
 }

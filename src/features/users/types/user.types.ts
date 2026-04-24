@@ -20,5 +20,12 @@ export type UserDto = {
   createdAt: string;
 }
 
+export type UserStats = {
+  total: number;
+  admins: number;
+  managers: number;
+  clients: number;
+};
+
 
 
