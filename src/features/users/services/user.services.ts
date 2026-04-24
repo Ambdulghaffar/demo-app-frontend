@@ -11,7 +11,8 @@ export const getAllUsers = async (
   size = 10,
   sortBy = "id",
   sortDir = "desc",
-  role?: string, // optionnel
+  role?: string,
+  search?: string,        
 ): Promise<PageResponse<UserDto>> => {
   try {
     const { data } = await apiClient.get<PageResponse<UserDto>>(
@@ -23,7 +24,8 @@ export const getAllUsers = async (
           size,
           sortBy,
           sortDir,
-          ...(role && role !== "all" && { role }),
+          ...(role   && role   !== "all" && { role }),
+          ...(search && search !== ""    && { search }), 
         },
       },
     );

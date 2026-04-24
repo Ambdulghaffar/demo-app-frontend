@@ -1,7 +1,10 @@
 import SidebarBreadcrumb from "@/components/dashboard/sidebar-breadcrumb";
 import { StatCard } from "@/components/dashboard/stat-card";
 import ListUsers from "@/features/users/components/list-users";
-import { getAllUsers, getUserStats } from "@/features/users/services/user.services";
+import {
+  getAllUsers,
+  getUserStats,
+} from "@/features/users/services/user.services";
 import { authOptions } from "@/lib/auth/auth";
 import { UserCheck, Shield, Crown, UsersRound } from "lucide-react";
 import { getServerSession } from "next-auth";
@@ -13,15 +16,23 @@ interface UsersPageProps {
     sortBy?: string;
     sortDir?: string;
     role?: string;
+    search?: string;
   }>;
 }
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
-  const { page, size, sortBy, sortDir, role } = await searchParams;
+  const { page, size, sortBy, sortDir, role, search } = await searchParams;
   const session = await getServerSession(authOptions);
 
   const [data, stats] = await Promise.all([
-    getAllUsers(Number(page) || 0, Number(size) || 10, sortBy || "id", sortDir || "desc", role),
+    getAllUsers(
+      Number(page) || 0,
+      Number(size) || 10,
+      sortBy || "id",
+      sortDir || "desc",
+      role,
+      search,
+    ),
     getUserStats(),
   ]);
 
@@ -40,8 +51,12 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
             <UsersRound className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Gestion des utilisateurs</h1>
-            <p className="text-gray-600">Administration et supervision des comptes utilisateur</p>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Gestion des utilisateurs
+            </h1>
+            <p className="text-gray-600">
+              Administration et supervision des comptes utilisateur
+            </p>
           </div>
         </div>
 
@@ -83,6 +98,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
         initialData={{ ...data, content: filteredContent }}
         currentPage={Number(page) || 0}
         currentRole={role || "all"}
+        currentSearch={search || ""} 
       />
     </div>
   );

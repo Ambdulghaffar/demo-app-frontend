@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { PlusCircle, Search, ListFilter, Pen } from "lucide-react";
@@ -47,17 +47,20 @@ import ConfirmationDialog from "@/components/confirmation-dialog";
 import { deleteUserAction } from "../actions/user.actions";
 import { toast } from "react-toastify";
 import { ApiError } from "@/types/api.types";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface ListUsersProps {
   initialData: PageResponse<UserDto>;
   currentPage: number;
   currentRole: string;
+  currentSearch: string;
 }
 
 export default function ListUsers({
   initialData,
   currentPage,
   currentRole,
+  currentSearch,
 }: ListUsersProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -66,11 +69,36 @@ export default function ListUsers({
   const [data, setData] = useState<PageResponse<UserDto>>(initialData);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [searchValue, setSearchValue] = useState(currentSearch);
+  // Attend 500ms après la dernière frappe avant de mettre à jour l'URL
+  const debouncedSearch = useDebounce(searchValue, 500);
 
   // Sync le state quand initialData change (navigation pagination/filtre)
   useEffect(() => {
     setData(initialData);
   }, [initialData]);
+
+  // Déclenche la navigation quand debouncedSearch change
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // Ignore le premier rendu — évite un push inutile au montage
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", "0");
+
+    if (debouncedSearch) {
+      params.set("search", debouncedSearch);
+    } else {
+      params.delete("search");
+    }
+
+    router.push(`${pathname}?${params.toString()}`);
+  }, [debouncedSearch, pathname, router, searchParams]);
 
   const getBadgeClasses = (role: string) => {
     switch (role.toUpperCase()) {
@@ -176,8 +204,10 @@ export default function ListUsers({
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Rechercher..."
+                placeholder="Rechercher par nom, email, téléphone..."
                 className="pl-8 w-full"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
               />
             </div>
             <Select value={currentRole} onValueChange={handleRoleChange}>
