@@ -18,7 +18,7 @@ export default async function EditUserPage({
   }
   return (
     <>
-      <SidebarBreadcrumb label="Editer" />
+      <SidebarBreadcrumb values={{ [id]: user.username }}/>
       <EditUser editUser={{ ...user }} />
     </>
   );

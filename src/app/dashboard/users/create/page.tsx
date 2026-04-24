@@ -5,7 +5,7 @@ import React from 'react'
 export default async function page() {
   return (
     <div>
-      <SidebarBreadcrumb label="Créer un utilisateur"/>
+      <SidebarBreadcrumb />
       <CreateUser/>
     </div>
   )

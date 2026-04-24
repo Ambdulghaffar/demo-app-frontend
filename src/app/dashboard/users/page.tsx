@@ -42,7 +42,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
 
   return (
     <div className="space-y-8">
-      <SidebarBreadcrumb label="Gestion des utilisateurs" />
+      <SidebarBreadcrumb />
 
       {/* Section d'introduction avec statistiques */}
       <div className="bg-gradient-to-r from-pink-50 to-white rounded-2xl p-6 border border-pink-100">
